@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kas Kelompok 4 - Transparansi Kas & Saldo LPD</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-border { border: 1px solid #ddd !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-700/80 flex items-center justify-center border border-emerald-500/40 shadow-inner">
+          <i class="fa-solid fa-vault text-emerald-200 text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-bold tracking-tight leading-tight" id="headerGroupName">Kelompok 4</h1>
+          <p class="text-xs text-emerald-200 flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Simpanan Kas di LPD
+          </p>
+        </div>
+      </div>
+      <div class="no-print">
+        <button id="btnAdminAuth" onclick="openPinModal()" class="text-xs bg-emerald-900/80 hover:bg-emerald-950 border border-emerald-600/50 text-emerald-100 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-lock text-[11px]"></i>
+          <span id="adminBtnLabel">Bendahara</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner Bendahara Active -->
+  <div id="bendaharaBanner" class="hidden bg-amber-500 text-amber-950 px-4 py-2 text-xs font-semibold text-center border-b border-amber-600 shadow-sm no-print">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <span><i class="fa-solid fa-circle-check mr-1.5"></i> Mode Pengurus Aktif (Bisa Tambah, Edit, Hapus)</span>
+      <button onclick="logoutAdmin()" class="underline hover:text-white font-bold ml-3">Keluar Mode Pengurus</button>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 pt-5 space-y-5">
+
+    <!-- 1. ZERO-CLICK DASHBOARD: CARD UTAMA SALDO LPD (LANGSUNG TERLIHAT) -->
+    <div class="bg-gradient-to-br from-emerald-700 to-teal-900 text-white rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl text-white pointer-events-none">
+        <i class="fa-solid fa-building-columns"></i>
+      </div>
+
+      <div class="relative z-10">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium uppercase tracking-wider text-emerald-200 bg-emerald-800/60 px-2.5 py-1 rounded-md border border-emerald-500/30">
+            <i class="fa-solid fa-landmark mr-1"></i> Rekening LPD
+          </span>
+          <span class="text-xs text-emerald-200/90" id="lastUpdatedText">
+            Sinkronisasi: Memuat...
+          </span>
+        </div>
+
+        <p class="text-xs md:text-sm text-emerald-100 font-medium mt-1">Saldo Kas Kelompok 4</p>
+        <div class="flex items-baseline space-x-1 my-1">
+          <span class="text-2xl md:text-3xl font-light text-emerald-300">Rp</span>
+          <span class="text-3xl md:text-5xl font-extrabold tracking-tight" id="displayBalance">0</span>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-emerald-600/40 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-100">
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-info text-emerald-300"></i>
+            <span>Semua pemasukan langsung disetor & diamankan di <strong>LPD</strong></span>
+          </div>
+          <span class="text-[11px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-700/50" id="lpdAccBadge">
+            LPD-KL4-88921
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ZERO-CLICK DASHBOARD: RINGKASAN PEMASUKAN & PENGELUARAN -->
+    <div class="grid grid-cols-2 gap-3 md:gap-4">
+      <!-- Total Pemasukan -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-emerald-100 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Pemasukan</span>
+          <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-arrow-down"></i>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Semua masuk LPD</p>
+          <div class="text-lg md:text-2xl font-bold text-emerald-700 mt-0.5" id="displayIncome">Rp 0</div>
+        </div>
+      </div>
+
+      <!-- Total Pengeluaran -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-rose-100 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Pengeluaran</span>
+          <div class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-arrow-up"></i>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Total belanja kas</p>
+          <div class="text-lg md:text-2xl font-bold text-rose-700 mt-0.5" id="displayExpense">Rp 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ACTIONS PANEL BENDAHARA (Hanya muncul jika Bendahara login) -->
+    <div id="bendaharaControls" class="hidden bg-white p-4 rounded-xl border border-amber-200 shadow-sm no-print space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+          Aksi Bendahara Kelompok 4
+        </h3>
+        <button onclick="openChangePinModal()" class="text-xs text-slate-500 hover:text-slate-800 underline">
+          Ganti PIN
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="openAddModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-3 rounded-lg text-xs md:text-sm flex items-center justify-center gap-2 transition shadow">
+          <i class="fa-solid fa-plus-circle"></i>
+          Catat Pemasukan (LPD)
+        </button>
+        <button onclick="openAddModal('expense')" class="bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 px-3 rounded-lg text-xs md:text-sm flex items-center justify-center gap-2 transition shadow">
+          <i class="fa-solid fa-minus-circle"></i>
+          Catat Pengeluaran
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. ZERO-CLICK RIWAYAT TRANSAKSI (LANGSUNG TAMPIL TANPA PERLU KLIK) -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-600"></i>
+            Rincian Pemasukan & Pengeluaran
+          </h2>
+          <p class="text-xs text-slate-500">Transparansi buku kas untuk seluruh anggota</p>
+        </div>
+        <div class="flex items-center gap-2 no-print">
+          <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-print"></i> Cetak / PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed Daftar Mutasi (Otomatis tampil & Mobile Friendly) -->
+      <div id="transactionsContainer" class="divide-y divide-slate-100">
+        <!-- Loading State -->
+        <div class="p-8 text-center text-slate-400 text-sm">
+          <i class="fa-solid fa-circle-notch fa-spin text-emerald-600 text-2xl mb-2"></i>
+          <p>Memuat catatan kas Kelompok 4...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Catatan Informasi -->
+    <footer class="text-center text-xs text-slate-400 pt-3 pb-8 space-y-1">
+      <p class="font-medium text-slate-500">Sistem Pencatatan Kas Transparan - Kelompok 4</p>
+      <p>Data tersinkronisasi otomatis dengan buku tabungan LPD.</p>
+    </footer>
+
+  </main>
+
+  <!-- MODAL: PIN BENDAHARA -->
+  <div id="pinModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl space-y-4">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2 text-xl">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <h3 class="font-bold text-base text-slate-800">Masuk Akses Bendahara</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Hanya untuk pengurus/bendahara</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Masukkan 4-Digit PIN:</label>
+        <input type="password" id="inputPin" maxlength="6" inputmode="numeric" placeholder="1234" class="w-full text-center tracking-widest text-2xl font-bold py-2 border rounded-xl border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <p class="text-[11px] text-slate-400 text-center mt-1">Default PIN: 1234</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="closePinModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-lg">Batal</button>
+        <button onclick="submitPin()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold py-2.5 rounded-lg shadow">Verifikasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: INPUT / EDIT TRANSAKSI (BENDAHARA) -->
+  <div id="trxModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 my-8">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="trxModalTitle" class="font-bold text-slate-800 text-base">Tambah Catatan Kas</h3>
+        <button onclick="closeTrxModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <form id="trxForm" onsubmit="handleTrxSubmit(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="editTrxId" value="">
+
+        <!-- Tipe Transaksi -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Jenis Mutasi:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border cursor-pointer has-[:checked]:bg-emerald-50 has-[:checked]:border-emerald-600 has-[:checked]:text-emerald-800 border-slate-200">
+              <input type="radio" name="trxType" value="income" checked onchange="handleTypeChange('income')" class="hidden">
+              <i class="fa-solid fa-arrow-down text-emerald-600"></i>
+              <span class="font-semibold">Pemasukan (LPD)</span>
+            </label>
+            <label class="flex items-center justify-center gap-2 p-2.5 rounded-xl border cursor-pointer has-[:checked]:bg-rose-50 has-[:checked]:border-rose-600 has-[:checked]:text-rose-800 border-slate-200">
+              <input type="radio" name="trxType" value="expense" onchange="handleTypeChange('expense')" class="hidden">
+              <i class="fa-solid fa-arrow-up text-rose-600"></i>
+              <span class="font-semibold">Pengeluaran</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Tanggal -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Tanggal Transaksi:</label>
+          <input type="date" id="trxDate" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+        <!-- Nominal -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nominal (Rupiah):</label>
+          <div class="relative">
+            <span class="absolute left-3 top-2 font-bold text-slate-500 text-xs">Rp</span>
+            <input type="number" id="trxAmount" placeholder="Contoh: 500000" min="1" required class="w-full border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Kategori -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Kategori:</label>
+          <select id="trxCategory" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <!-- Dynamic options -->
+          </select>
+        </div>
+
+        <!-- Keterangan -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Keterangan / Rincian:</label>
+          <textarea id="trxDesc" rows="2" placeholder="Contoh: Iuran kas bulan November / Beli sarana upakara" class="w-full border border-slate-300 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Info Tambahan LPD -->
+        <div id="lpdNotice" class="bg-emerald-50 text-emerald-800 p-2.5 rounded-lg border border-emerald-200 text-[11px] flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-emerald-600 text-sm"></i>
+          <span>Dana pemasukan otomatis tercatat ditempatkan di rekening <strong>LPD</strong>.</span>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeTrxModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold">Batal</button>
+          <button type="submit" id="btnSubmitTrx" class="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold shadow">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: GANTI PIN -->
+  <div id="changePinModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl space-y-4">
+      <h3 class="font-bold text-sm text-slate-800 text-center">Ganti PIN Bendahara</h3>
+      <div>
+        <label class="block text-xs text-slate-600 mb-1">PIN Baru (min 4 digit):</label>
+        <input type="password" id="inputNewPin" maxlength="6" inputmode="numeric" class="w-full text-center text-xl font-bold py-2 border rounded-xl border-slate-300">
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="closeChangePinModal()" class="w-full bg-slate-100 py-2 rounded-lg text-xs font-semibold text-slate-700">Batal</button>
+        <button onclick="submitChangePin()" class="w-full bg-emerald-700 text-white py-2 rounded-lg text-xs font-semibold">Simpan PIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let adminToken = localStorage.getItem('kas_admin_pin') || null;
+    let cachedTransactions = [];
+
+    const incomeCategories = [
+      "Iuran Anggota",
+      "Punia / Sumbangan",
+      "Bunga Simpanan LPD",
+      "Denda Keterlambatan",
+      "Sisa Kegiatan",
+      "Pemasukan Lainnya"
+    ];
+
+    const expenseCategories = [
+      "Upakara & Sosial",
+      "Konsumsi Rapat",
+      "Operasional & ATK",
+      "Dana Duka / Kematian",
+      "Bantuan Warga / Sosial",
+      "Pengeluaran Lainnya"
+    ];
+
+    // Helper format Rupiah
+    function formatIDR(num) {
+      return new Intl.NumberFormat('id-ID').format(num || 0);
+    }
+
+    // Helper format Tanggal Indonesia
+    function formatTanggalIndo(dateStr) {
+      if (!dateStr) return '-';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        const bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        const day = parseInt(parts[2], 10);
+        const monthIndex = parseInt(parts[1], 10) - 1;
+        const year = parts[0];
+        return `${day} ${bulan[monthIndex]} ${year}`;
+      }
+      return dateStr;
+    }
+
+    // 1. Load Data on Initial Page Load (Zero Click for Members)
+    async function loadData() {
+      try {
+        // Fetch Summary
+        const resSum = await fetch('/api/summary');
+        const summary = await resSum.json();
+
+        if (summary.success) {
+          document.getElementById('headerGroupName').innerText = summary.groupName || 'Kelompok 4';
+          document.getElementById('displayBalance').innerText = formatIDR(summary.balance);
+          document.getElementById('displayIncome').innerText = 'Rp ' + formatIDR(summary.totalIncome);
+          document.getElementById('displayExpense').innerText = 'Rp ' + formatIDR(summary.totalExpense);
+          document.getElementById('lpdAccBadge').innerText = summary.accountNumberLPD || 'LPD Terverifikasi';
+
+          if (summary.lastUpdated) {
+            const d = new Date(summary.lastUpdated);
+            document.getElementById('lastUpdatedText').innerText = 'Update: ' + d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+          }
+        }
+
+        // Fetch Transactions List
+        const resTrx = await fetch('/api/transactions');
+        const trxData = await resTrx.json();
+
+        if (trxData.success) {
+          cachedTransactions = trxData.data || [];
+          renderTransactions(cachedTransactions);
+        }
+      } catch (err) {
+        console.error('Error loading data:', err);
+        document.getElementById('transactionsContainer').innerHTML = `
+          <div class="p-6 text-center text-red-500 text-xs">
+            Gagal menghubungkan ke server kas. Silakan refresh halaman.
+          </div>
+        `;
+      }
+    }
+
+    // 2. Render List Transaksi Langsung Tampil
+    function renderTransactions(transactions) {
+      const container = document.getElementById('transactionsContainer');
+      if (!transactions || transactions.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-slate-400 text-xs">
+            <i class="fa-solid fa-receipt text-2xl mb-2 text-slate-300"></i>
+            <p>Belum ada catatan mutasi kas.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const isAdmin = Boolean(adminToken);
+
+      container.innerHTML = transactions.map(t => {
+        const isIncome = t.type === 'income';
+        const sign = isIncome ? '+' : '-';
+        const colorClass = isIncome ? 'text-emerald-700' : 'text-rose-600';
+        const badgeBg = isIncome ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200';
+        const iconClass = isIncome ? 'fa-arrow-down text-emerald-600 bg-emerald-100' : 'fa-arrow-up text-rose-600 bg-rose-100';
+
+        const adminButtons = isAdmin ? `
+          <div class="flex items-center gap-1.5 mt-2 no-print">
+            <button onclick="openEditModal('${t.id}')" class="text-[11px] text-blue-600 hover:text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+              <i class="fa-solid fa-pencil"></i> Edit
+            </button>
+            <button onclick="deleteTransaction('${t.id}')" class="text-[11px] text-red-600 hover:text-red-800 bg-red-50 border border-red-200 px-2 py-0.5 rounded">
+              <i class="fa-solid fa-trash"></i> Hapus
+            </button>
+          </div>
+        ` : '';
+
+        return `
+          <div class="p-4 hover:bg-slate-50 transition flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-full ${iconClass} flex items-center justify-center text-xs shrink-0 mt-0.5">
+                <i class="fa-solid ${isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+              </div>
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-bold text-slate-800">${escapeHtml(t.category)}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full border ${badgeBg} font-medium">
+                    ${t.lpdStatus || (isIncome ? 'Tersimpan di LPD' : 'Ditarik dari LPD')}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600 leading-snug">${escapeHtml(t.description || '-')}</p>
+                <p class="text-[11px] text-slate-400 flex items-center gap-1">
+                  <i class="fa-regular fa-calendar text-[10px]"></i>
+                  ${formatTanggalIndo(t.date)}
+                </p>
+                ${adminButtons}
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-sm md:text-base font-extrabold ${colorClass}">
+                ${sign} Rp ${formatIDR(t.amount)}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 3. Admin State & Login
+    function updateAdminUI() {
+      const banner = document.getElementById('bendaharaBanner');
+      const controls = document.getElementById('bendaharaControls');
+      const adminBtnLabel = document.getElementById('adminBtnLabel');
+
+      if (adminToken) {
+        banner.classList.remove('hidden');
+        controls.classList.remove('hidden');
+        adminBtnLabel.innerText = 'Pengurus';
+      } else {
+        banner.classList.add('hidden');
+        controls.classList.add('hidden');
+        adminBtnLabel.innerText = 'Bendahara';
+      }
+      renderTransactions(cachedTransactions);
+    }
+
+    function openPinModal() {
+      if (adminToken) {
+        if (confirm('Keluar dari mode Bendahara?')) {
+          logoutAdmin();
+        }
+        return;
+      }
+      document.getElementById('inputPin').value = '';
+      document.getElementById('pinModal').classList.remove('hidden');
+      document.getElementById('inputPin').focus();
+    }
+
+    function closePinModal() {
+      document.getElementById('pinModal').classList.add('hidden');
+    }
+
+    async function submitPin() {
+      const pin = document.getElementById('inputPin').value;
+      if (!pin) return alert('Masukkan PIN terlebih dahulu.');
+
+      try {
+        const res = await fetch('/api/auth/verify-pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        const result = await res.json();
+        if (result.success) {
+          adminToken = pin;
+          localStorage.setItem('kas_admin_pin', pin);
+          closePinModal();
+          updateAdminUI();
+          alert('Berhasil masuk sebagai Bendahara.');
+        } else {
+          alert('PIN salah. Silakan coba lagi.');
+        }
+      } catch (err) {
+        alert('Gagal memverifikasi PIN.');
+      }
+    }
+
+    function logoutAdmin() {
+      adminToken = null;
+      localStorage.removeItem('kas_admin_pin');
+      updateAdminUI();
+    }
+
+    // 4. Modal Transaksi (Tambah / Edit)
+    function handleTypeChange(type) {
+      const catSelect = document.getElementById('trxCategory');
+      const categories = type === 'income' ? incomeCategories : expenseCategories;
+      catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+      const notice = document.getElementById('lpdNotice');
+      if (type === 'income') {
+        notice.classList.remove('hidden');
+      } else {
+        notice.classList.add('hidden');
+      }
+    }
+
+    function openAddModal(type = 'income') {
+      document.getElementById('editTrxId').value = '';
+      document.getElementById('trxModalTitle').innerText = type === 'income' ? 'Catat Pemasukan (Simpan ke LPD)' : 'Catat Pengeluaran Kas';
+      document.getElementById('trxDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('trxAmount').value = '';
+      document.getElementById('trxDesc').value = '';
+
+      const radio = document.querySelector(`input[name="trxType"][value="${type}"]`);
+      if (radio) radio.checked = true;
+      handleTypeChange(type);
+
+      document.getElementById('trxModal').classList.remove('hidden');
+    }
+
+    function openEditModal(id) {
+      const t = cachedTransactions.find(item => item.id === id);
+      if (!t) return;
+
+      document.getElementById('editTrxId').value = t.id;
+      document.getElementById('trxModalTitle').innerText = 'Edit Catatan Transaksi';
+      document.getElementById('trxDate').value = t.date;
+      document.getElementById('trxAmount').value = t.amount;
+      document.getElementById('trxDesc').value = t.description || '';
+
+      const radio = document.querySelector(`input[name="trxType"][value="${t.type}"]`);
+      if (radio) radio.checked = true;
+      handleTypeChange(t.type);
+      document.getElementById('trxCategory').value = t.category;
+
+      document.getElementById('trxModal').classList.remove('hidden');
+    }
+
+    function closeTrxModal() {
+      document.getElementById('trxModal').classList.add('hidden');
+    }
+
+    async function handleTrxSubmit(e) {
+      e.preventDefault();
+      if (!adminToken) {
+        alert('Sesi berakhir. Silakan login kembali.');
+        return;
+      }
+
+      const id = document.getElementById('editTrxId').value;
+      const type = document.querySelector('input[name="trxType"]:checked').value;
+      const date = document.getElementById('trxDate').value;
+      const amount = document.getElementById('trxAmount').value;
+      const category = document.getElementById('trxCategory').value;
+      const description = document.getElementById('trxDesc').value;
+
+      const payload = { type, date, amount, category, description };
+      const url = id ? `/api/transactions/${id}` : '/api/transactions';
+      const method = id ? 'PUT' : 'POST';
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-pin': adminToken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          closeTrxModal();
+          loadData();
+        } else {
+          alert(data.message || 'Gagal menyimpan transaksi.');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan jaringan.');
+      }
+    }
+
+    async function deleteTransaction(id) {
+      if (!confirm('Yakin ingin menghapus catatan kas ini?')) return;
+      try {
+        const res = await fetch(`/api/transactions/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-pin': adminToken }
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadData();
+        } else {
+          alert(data.message || 'Gagal menghapus transaksi.');
+        }
+      } catch (err) {
+        alert('Gagal menghapus transaksi.');
+      }
+    }
+
+    // 5. Ganti PIN
+    function openChangePinModal() {
+      document.getElementById('inputNewPin').value = '';
+      document.getElementById('changePinModal').classList.remove('hidden');
+    }
+
+    function closeChangePinModal() {
+      document.getElementById('changePinModal').classList.add('hidden');
+    }
+
+    async function submitChangePin() {
+      const newPin = document.getElementById('inputNewPin').value;
+      if (!newPin || newPin.length < 4) {
+        return alert('PIN baru minimal 4 angka.');
+      }
+
+      try {
+        const res = await fetch('/api/auth/change-pin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-pin': adminToken
+          },
+          body: JSON.stringify({ newPin })
+        });
+        const data = await res.json();
+        if (data.success) {
+          adminToken = newPin;
+          localStorage.setItem('kas_admin_pin', newPin);
+          closeChangePinModal();
+          alert('PIN Bendahara berhasil diganti!');
+        } else {
+          alert(data.message || 'Gagal mengganti PIN.');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan saat mengganti PIN.');
+      }
+    }
+
+    // Initial Execution
+    updateAdminUI();
+    loadData();
+  </script>
+</body>
+</html>

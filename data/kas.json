@@ -1,0 +1,61 @@
+{
+  "settings": {
+    "groupName": "Kelompok 4",
+    "subTitle": "Kas Tempek / Kelompok 4",
+    "lpdName": "LPD (Lembaga Perkreditan Desa)",
+    "adminPin": "1234",
+    "accountNumberLPD": "LPD-KL4-88921"
+  },
+  "transactions": [
+    {
+      "id": "trx-1730784000000",
+      "date": "2026-11-01",
+      "type": "income",
+      "category": "Iuran Anggota",
+      "amount": 2500000,
+      "description": "Iuran kas bulanan periode November (25 anggota)",
+      "lpdStatus": "Tersimpan di LPD",
+      "createdAt": "2026-11-01T08:00:00.000Z"
+    },
+    {
+      "id": "trx-1730870400000",
+      "date": "2026-11-02",
+      "type": "income",
+      "category": "Punia / Sumbangan",
+      "amount": 1000000,
+      "description": "Punia sukarela dari krama untuk kas kelompok",
+      "lpdStatus": "Tersimpan di LPD",
+      "createdAt": "2026-11-02T10:15:00.000Z"
+    },
+    {
+      "id": "trx-1730956800000",
+      "date": "2026-11-03",
+      "type": "expense",
+      "category": "Upakara & Sosial",
+      "amount": 650000,
+      "description": "Pembelian sarana upakara dan tirta kegiatan bersama",
+      "lpdStatus": "Ditarik dari LPD",
+      "createdAt": "2026-11-03T14:30:00.000Z"
+    },
+    {
+      "id": "trx-1731043200000",
+      "date": "2026-11-04",
+      "type": "expense",
+      "category": "Konsumsi Rapat",
+      "amount": 350000,
+      "description": "Snack & konsumsi rapat koordinasi anggota",
+      "lpdStatus": "Ditarik dari LPD",
+      "createdAt": "2026-11-04T19:00:00.000Z"
+    },
+    {
+      "id": "trx-1731129600000",
+      "date": "2026-11-05",
+      "type": "income",
+      "category": "Bunga Simpanan LPD",
+      "amount": 45000,
+      "description": "Bagi hasil / bunga tabungan LPD bulan lalu",
+      "lpdStatus": "Tersimpan di LPD",
+      "createdAt": "2026-11-05T09:00:00.000Z"
+    }
+  ]
+}
