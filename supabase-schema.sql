@@ -16,29 +16,19 @@ CREATE TABLE IF NOT EXISTS transactions (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 2. Tabel Pengaturan (PIN Anggota, PIN Pengurus, dll)
+-- 2. Tabel Pengaturan (Pengaturan Umum & Kredensial)
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
 
--- 3. Data Awal Pengaturan
+-- 3. Data Awal Konfigurasi
+-- Nilai PIN dapat diatur langsung melalui menu Table Editor di dashboard Supabase
 INSERT INTO settings (key, value) VALUES
   ('group_name', 'Kelompok 4'),
   ('sub_title', 'Buku Kas Kelompok 4'),
   ('lpd_name', 'LPD'),
   ('lpd_account', 'LPD-KL4-88921'),
-  ('member_pin', '1111'),
-  ('admin_pin', '1234')
+  ('member_pin', '0000'),
+  ('admin_pin', '0000')
 ON CONFLICT (key) DO NOTHING;
-
--- 4. Data transaksi dikosongkan (diisi oleh Pengurus melalui web)
-
--- 5. Enable Row Level Security (RLS) - Opsional untuk keamanan tambahan
--- ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
-
--- 6. Policy: Allow all operations via service_role key (backend)
--- CREATE POLICY "Allow all for service role" ON transactions FOR ALL USING (true);
--- CREATE POLICY "Allow all for service role" ON settings FOR ALL USING (true);
-

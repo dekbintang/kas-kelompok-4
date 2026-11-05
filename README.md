@@ -1,65 +1,97 @@
-# 🏦 Sistem Pencatatan Kas Kelompok 4
-> Sistem Transparansi Kas & Penempatan Dana LPD (Lembaga Perkreditan Desa) dengan Tampilan **Zero-Click** untuk Anggota.
+# Sistem Informasi Buku Kas Kelompok 4
+
+Sistem pencatatan dan transparansi keuangan kas berbasis web dengan integrasi penempatan dana pada Lembaga Perkreditan Desa (LPD). Aplikasi dirancang dengan antarmuka yang bersih, formal, dan responsif untuk memudahkan pemantauan keuangan secara real-time.
 
 ---
 
-## 🌟 Fitur Utama
+## Fitur Utama
 
-1. **Dashboard Zero-Click untuk Anggota:**
-   - Anggota cukup membuka link web, **tanpa perlu memencet tombol atau ikon apa pun**.
-   - Langsung menampilkan:
-     - 💳 **Saldo Kas Terkini di LPD** (Font besar & status rekening).
-     - 📈 **Total Pemasukan** (Semua tercatat ditempatkan di LPD).
-     - 📉 **Total Pengeluaran** (Rincian belanja/kegiatan).
-     - 📜 **Daftar Mutasi / Riwayat Transaksi** tersaji langsung di layar utama secara berurutan.
-2. **Akses Khusus Bendahara (PIN Protected):**
-   - Tombol bendahara di pojok kanan atas.
-   - Dilindungi PIN keamanan (Default: `1234`, dapat diganti langsung di aplikasi).
-   - Form Tambah Pemasukan (otomatis masuk ke rekening LPD).
-   - Form Tambah Pengeluaran.
-   - Fitur Edit & Hapus transaksi.
-3. **Cetak & Ekspor Laporan:**
-   - Tombol Cetak / Simpan PDF yang otomatis diformat rapi untuk arsip fisik atau tanda tangan pengurus.
-
----
-
-## 🚀 Cara Menjalankan di Komputer Lokal
-
-1. **Buka Terminal / Command Prompt** di folder ini (`c:\Tempek 4`).
-2. Jalankan perintah:
-   ```bash
-   npm start
-   ```
-3. Buka browser di HP atau Laptop:
-   ```
-   http://localhost:3000
-   ```
+- **Otentikasi Berbasis Peran (Role-Based Access):**
+  - Akses Anggota: Tampilan transparansi kas real-time (*read-only*).
+  - Akses Pengurus: Pencatatan mutasi kas (pemasukan dan pengeluaran), pengeditan, serta penghapusan data transaksi.
+- **Transparansi Kas Real-Time:**
+  - Tampilan ringkasan saldo akhir kas di LPD.
+  - Akumulasi total pemasukan dan pengeluaran kas.
+  - Pemisahan tabel pencatatan mutasi pemasukan dan pengeluaran secara mandiri.
+- **Pencarian & Penyaringan Data:**
+  - Filter transaksi berdasarkan tanggal tertentu.
+  - Filter transaksi berdasarkan kategori spesifik.
+- **Manajemen Mutasi Terstruktur:**
+  - Kategori Pemasukan: Iuran Anggota, Punia / Sumbangan, Denda, Pemasukan Lainnya.
+  - Kategori Pengeluaran: Upakara & Sosial, Operasional, Dana Duka, Pengeluaran Lainnya.
+- **Ekspor & Cetak Laporan:**
+  - Format cetak ramah printer (*print-optimized*) untuk kebutuhan arsip dan pelaporan fisik.
+- **Dukungan Multi-Penyimpanan Data:**
+  - Cloud Database: Terintegrasi dengan Supabase (PostgreSQL) untuk persistensi data online.
+  - Local Storage: Mendukung penyimpanan berbasis file JSON untuk lingkungan pengembangan.
 
 ---
 
-## 🌐 Panduan Deploy ke Internet (Bisa Dibuka Seluruh Anggota di WhatsApp)
+## Teknologi yang Digunakan
 
-### Opsi 1: Deploy ke Vercel (Paling Populer & Gratis)
-File konfigurasi `vercel.json` sudah disiapkan.
-1. Buat akun di [Vercel](https://vercel.com).
-2. Upload folder ini ke GitHub atau deploy langsung menggunakan Vercel CLI:
-   ```bash
-   npm i -g vercel
-   vercel
-   ```
-3. Web Anda langsung aktif dan memiliki link (contoh: `https://kas-kelompok4.vercel.app`) yang siap dibagikan ke grup WhatsApp.
+- **Backend:** Node.js, Express.js
+- **Database:** Supabase (PostgreSQL) / File Storage Lokal
+- **Frontend:** HTML5, Vanilla JavaScript, Tailwind CSS
+- **Deployment Platform:** Vercel / Render / Docker Container
 
-### Opsi 2: Deploy ke Render (Gratis & Mendukung Penyimpanan File Permanen)
-1. Buat akun di [Render.com](https://render.com).
-2. Pilih **New Web Service** -> Hubungkan dengan repositori GitHub Anda.
-3. Konfigurasi:
-   - **Environment:** `Node`
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-4. Klik **Deploy Web Service**.
+---
 
-### Opsi 3: Deploy Menggunakan Docker
-File `Dockerfile` sudah tersedia:
+## Struktur Direktori
+
+```
+├── data/
+│   └── kas.json             # Penyimpanan lokal cadangan
+├── public/
+│   └── index.html           # Antarmuka web utama
+├── .dockerignore            # Aturan pengabaian file Docker
+├── .env.example             # Template konfigurasi environment variable
+├── .gitignore               # Aturan pengabaian file Git
+├── Dockerfile               # Konfigurasi container Docker
+├── package.json             # Manifes dependensi Node.js
+├── server.js                # Server backend Express & REST API
+├── supabase-schema.sql      # Skema database PostgreSQL untuk Supabase
+└── vercel.json              # Konfigurasi deployment Vercel
+```
+
+---
+
+## Menjalankan di Lingkungan Lokal
+
+### 1. Prasyarat
+- Node.js versi 18 atau yang lebih baru.
+- npm (Node Package Manager).
+
+### 2. Instalasi Dependensi
+Jalankan perintah berikut pada terminal:
+```bash
+npm install
+```
+
+### 3. Konfigurasi Lingkungan
+Salin file `.env.example` menjadi `.env` dan lengkapi variabel yang dibutuhkan jika menggunakan database cloud:
+```bash
+cp .env.example .env
+```
+
+### 4. Menjalankan Aplikasi
+```bash
+npm start
+```
+Aplikasi akan aktif dan dapat diakses melalui browser pada port lokal yang ditentukan (default: port 3000).
+
+---
+
+## Panduan Deployment
+
+### Deployment ke Vercel
+1. Hubungkan repositori Git ke proyek baru di dashboard penyedia hosting.
+2. Daftarkan Environment Variables berikut pada pengaturan proyek:
+   - `SUPABASE_URL`: URL endpoint proyek database.
+   - `SUPABASE_KEY`: Kunci API proyek database.
+   - `STORAGE_MODE`: Diisi dengan nilai `supabase`.
+3. Jalankan proses deployment.
+
+### Deployment Menggunakan Docker
 ```bash
 docker build -t kas-kelompok4 .
 docker run -p 3000:3000 kas-kelompok4
@@ -67,22 +99,7 @@ docker run -p 3000:3000 kas-kelompok4
 
 ---
 
-## 🔐 Informasi Akun Pengurus / Bendahara
-* **Default PIN:** `1234`
-* Cara login: Klik tombol **Bendahara** di kanan atas header, masukkan PIN `1234`.
-* Untuk mengganti PIN: Setelah login, klik tautan **Ganti PIN** pada panel bendahara.
-
----
-
-## 📁 Struktur Berkas
-```
-├── server.js            # Backend API Express & kalkulasi kas
-├── vercel.json          # Konfigurasi deploy ke Vercel
-├── Dockerfile           # Konfigurasi container deploy
-├── package.json         # Konfigurasi Node.js & dependencies
-├── data/
-│   └── kas.json         # Penyimpanan data saldo & riwayat transaksi
-└── public/
-    └── index.html       # Tampilan frontend responsif (Zero-Click Dashboard)
-```
-
+## Keamanan Data
+- Kredensial dan kunci autentikasi tidak disimpan di dalam repositori publik.
+- Pengaturan hak akses dan PIN dikelola secara terpusat melalui database.
+- Seluruh komunikasi data pada lingkungan produksi menggunakan protokol aman HTTPS.
