@@ -41,7 +41,7 @@
 
   <main class="max-w-4xl mx-auto px-4 py-5 space-y-4">
 
-    <!-- 1. RINGKASAN SALDO (Clean, Formal, Tidak Mencolok) -->
+    <!-- 1. RINGKASAN SALDO -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
       <!-- Saldo LPD -->
       <div class="bg-white p-4 rounded-lg border border-slate-200 md:col-span-1 shadow-sm">
@@ -81,8 +81,8 @@
       </div>
     </div>
 
-    <!-- 3. FILTER DAN PENCARIAN (Rapi & Mudah untuk Orang Tua / Bapak-bapak) -->
-    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm space-y-2.5">
+    <!-- 3. PENCARIAN & FILTER -->
+    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm space-y-3">
       <div class="flex items-center justify-between">
         <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Pencarian & Filter</span>
         <button onclick="resetFilters()" id="btnResetFilter" class="hidden text-xs text-slate-500 hover:text-slate-800 underline">
@@ -115,19 +115,39 @@
           </select>
         </div>
       </div>
-    </div>
 
-    <!-- 4. TABEL DAFTAR TRANSAKSI (Langsung Tampil & Bersih) -->
-    <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-3.5 border-b border-slate-200 flex items-center justify-between">
-        <div>
-          <h2 class="text-sm font-bold text-slate-800">Catatan Kas</h2>
-          <p class="text-xs text-slate-500" id="filterStatusText">Menampilkan seluruh data kas</p>
+      <!-- Tampilan Pilihan Tab Tampil (Default: Keduanya) -->
+      <div class="pt-1 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2 text-xs no-print">
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-500 font-medium">Tampilkan:</span>
+          <button id="tabBoth" onclick="setViewMode('both')" class="px-2.5 py-1 rounded border text-xs font-medium bg-slate-800 text-white border-slate-800">
+            Semua (Dipisah)
+          </button>
+          <button id="tabIncome" onclick="setViewMode('income')" class="px-2.5 py-1 rounded border text-xs font-medium bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+            Hanya Pemasukan
+          </button>
+          <button id="tabExpense" onclick="setViewMode('expense')" class="px-2.5 py-1 rounded border text-xs font-medium bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200">
+            Hanya Pengeluaran
+          </button>
         </div>
-        <div class="no-print">
+        <div>
           <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1 rounded">
             Cetak
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. BAGIAN PEMASUKAN (TABEL DIPISAH) -->
+    <div id="sectionIncome" class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden space-y-0">
+      <div class="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div>
+          <h2 class="text-sm font-bold text-emerald-900">Catatan Pemasukan</h2>
+          <p class="text-xs text-slate-500" id="incomeCountText">Memuat...</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-slate-500 block">Subtotal</span>
+          <span class="text-sm font-bold text-emerald-800" id="incomeSubtotal">Rp 0</span>
         </div>
       </div>
 
@@ -138,14 +158,49 @@
               <th class="px-3.5 py-2.5 w-24">Tanggal</th>
               <th class="px-3.5 py-2.5 w-32">Kategori</th>
               <th class="px-3.5 py-2.5">Keterangan</th>
-              <th class="px-3.5 py-2.5 text-right w-28">Jumlah</th>
-              <th class="px-3.5 py-2.5 text-center w-20 no-print" id="thAction">Aksi</th>
+              <th class="px-3.5 py-2.5 text-right w-28">Jumlah (Rp)</th>
+              <th class="px-3.5 py-2.5 text-center w-20 no-print actionCol">Aksi</th>
             </tr>
           </thead>
-          <tbody id="transactionsTableBody" class="divide-y divide-slate-100">
+          <tbody id="incomeTableBody" class="divide-y divide-slate-100">
             <tr>
-              <td colspan="5" class="px-4 py-8 text-center text-slate-400">
-                Memuat data kas...
+              <td colspan="5" class="px-4 py-6 text-center text-slate-400">
+                Memuat catatan pemasukan...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5. BAGIAN PENGELUARAN (TABEL DIPISAH) -->
+    <div id="sectionExpense" class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden space-y-0">
+      <div class="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div>
+          <h2 class="text-sm font-bold text-rose-900">Catatan Pengeluaran</h2>
+          <p class="text-xs text-slate-500" id="expenseCountText">Memuat...</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-slate-500 block">Subtotal</span>
+          <span class="text-sm font-bold text-rose-800" id="expenseSubtotal">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs divide-y divide-slate-200 print-table">
+          <thead class="bg-slate-50 text-slate-600 font-semibold">
+            <tr>
+              <th class="px-3.5 py-2.5 w-24">Tanggal</th>
+              <th class="px-3.5 py-2.5 w-32">Kategori</th>
+              <th class="px-3.5 py-2.5">Keterangan</th>
+              <th class="px-3.5 py-2.5 text-right w-28">Jumlah (Rp)</th>
+              <th class="px-3.5 py-2.5 text-center w-20 no-print actionCol">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTableBody" class="divide-y divide-slate-100">
+            <tr>
+              <td colspan="5" class="px-4 py-6 text-center text-slate-400">
+                Memuat catatan pengeluaran...
               </td>
             </tr>
           </tbody>
@@ -253,6 +308,7 @@
   <script>
     let adminToken = localStorage.getItem('kas_admin_pin') || null;
     let rawTransactions = [];
+    let currentViewMode = 'both'; // 'both', 'income', 'expense'
 
     // Kategori Sesuai Permintaan
     const incomeCategories = [
@@ -308,13 +364,35 @@
         }
       } catch (err) {
         console.error('Error loadData:', err);
-        document.getElementById('transactionsTableBody').innerHTML = `
-          <tr>
-            <td colspan="5" class="px-4 py-6 text-center text-red-600 text-xs">
-              Gagal memuat data. Silakan muat ulang halaman.
-            </td>
-          </tr>
-        `;
+      }
+    }
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      const btnBoth = document.getElementById('tabBoth');
+      const btnIncome = document.getElementById('tabIncome');
+      const btnExpense = document.getElementById('tabExpense');
+
+      const secIncome = document.getElementById('sectionIncome');
+      const secExpense = document.getElementById('sectionExpense');
+
+      // Reset button styles
+      [btnBoth, btnIncome, btnExpense].forEach(b => {
+        b.className = "px-2.5 py-1 rounded border text-xs font-medium bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200";
+      });
+
+      if (mode === 'both') {
+        btnBoth.className = "px-2.5 py-1 rounded border text-xs font-medium bg-slate-800 text-white border-slate-800";
+        secIncome.classList.remove('hidden');
+        secExpense.classList.remove('hidden');
+      } else if (mode === 'income') {
+        btnIncome.className = "px-2.5 py-1 rounded border text-xs font-medium bg-slate-800 text-white border-slate-800";
+        secIncome.classList.remove('hidden');
+        secExpense.classList.add('hidden');
+      } else if (mode === 'expense') {
+        btnExpense.className = "px-2.5 py-1 rounded border text-xs font-medium bg-slate-800 text-white border-slate-800";
+        secIncome.classList.add('hidden');
+        secExpense.classList.remove('hidden');
       }
     }
 
@@ -336,14 +414,7 @@
         return true;
       });
 
-      const statusText = document.getElementById('filterStatusText');
-      if (isFiltered) {
-        statusText.innerText = `Menampilkan ${filtered.length} dari ${rawTransactions.length} transaksi`;
-      } else {
-        statusText.innerText = `Menampilkan seluruh data kas (${rawTransactions.length} transaksi)`;
-      }
-
-      renderTable(filtered);
+      renderSeparatedTables(filtered);
     }
 
     function resetFilters() {
@@ -352,53 +423,77 @@
       applyFilters();
     }
 
-    function renderTable(list) {
-      const tbody = document.getElementById('transactionsTableBody');
+    function renderSeparatedTables(list) {
       const isAdmin = Boolean(adminToken);
 
-      if (!list || list.length === 0) {
-        tbody.innerHTML = `
+      const incomes = list.filter(t => t.type === 'income');
+      const expenses = list.filter(t => t.type === 'expense');
+
+      const totalInc = incomes.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const totalExp = expenses.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+      document.getElementById('incomeSubtotal').innerText = 'Rp ' + formatIDR(totalInc);
+      document.getElementById('incomeCountText').innerText = `${incomes.length} transaksi pemasukan`;
+
+      document.getElementById('expenseSubtotal').innerText = 'Rp ' + formatIDR(totalExp);
+      document.getElementById('expenseCountText').innerText = `${expenses.length} transaksi pengeluaran`;
+
+      // Render Pemasukan
+      const tbodyIncome = document.getElementById('incomeTableBody');
+      if (incomes.length === 0) {
+        tbodyIncome.innerHTML = `
           <tr>
-            <td colspan="5" class="px-4 py-8 text-center text-slate-400">
-              Tidak ada catatan transaksi yang sesuai.
+            <td colspan="5" class="px-4 py-6 text-center text-slate-400">
+              Tidak ada catatan pemasukan yang sesuai.
             </td>
           </tr>
         `;
-        return;
+      } else {
+        tbodyIncome.innerHTML = incomes.map(t => renderRow(t, isAdmin, 'text-emerald-800', '+')).join('');
       }
 
-      tbody.innerHTML = list.map(t => {
-        const isIncome = t.type === 'income';
-        const sign = isIncome ? '+' : '-';
-        const color = isIncome ? 'text-emerald-800' : 'text-rose-800';
-
-        const actionButtons = isAdmin ? `
-          <td class="px-3.5 py-2.5 text-center no-print whitespace-nowrap">
-            <button onclick="openEditModal('${t.id}')" class="text-slate-600 hover:text-slate-900 underline mr-2">Edit</button>
-            <button onclick="deleteTransaction('${t.id}')" class="text-rose-700 hover:text-rose-900 underline">Hapus</button>
-          </td>
-        ` : `
-          <td class="px-3.5 py-2.5 text-center text-slate-400 no-print">-</td>
-        `;
-
-        return `
-          <tr class="hover:bg-slate-50/80">
-            <td class="px-3.5 py-2.5 whitespace-nowrap font-medium text-slate-700">
-              ${formatTanggal(t.date)}
+      // Render Pengeluaran
+      const tbodyExpense = document.getElementById('expenseTableBody');
+      if (expenses.length === 0) {
+        tbodyExpense.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-slate-400">
+              Tidak ada catatan pengeluaran yang sesuai.
             </td>
-            <td class="px-3.5 py-2.5 whitespace-nowrap text-slate-800 font-medium">
-              ${escapeHtml(t.category)}
-            </td>
-            <td class="px-3.5 py-2.5 text-slate-600 leading-snug">
-              ${escapeHtml(t.description || '-')}
-            </td>
-            <td class="px-3.5 py-2.5 text-right whitespace-nowrap font-semibold ${color}">
-              ${sign} Rp ${formatIDR(t.amount)}
-            </td>
-            ${actionButtons}
           </tr>
         `;
-      }).join('');
+      } else {
+        tbodyExpense.innerHTML = expenses.map(t => renderRow(t, isAdmin, 'text-rose-800', '-')).join('');
+      }
+    }
+
+    function renderRow(t, isAdmin, colorClass, sign) {
+      const actionButtons = isAdmin ? `
+        <td class="px-3.5 py-2.5 text-center no-print whitespace-nowrap">
+          <button onclick="openEditModal('${t.id}')" class="text-slate-600 hover:text-slate-900 underline mr-2">Edit</button>
+          <button onclick="deleteTransaction('${t.id}')" class="text-rose-700 hover:text-rose-900 underline">Hapus</button>
+        </td>
+      ` : `
+        <td class="px-3.5 py-2.5 text-center text-slate-400 no-print">-</td>
+      `;
+
+      return `
+        <tr class="hover:bg-slate-50/80">
+          <td class="px-3.5 py-2.5 whitespace-nowrap font-medium text-slate-700">
+            ${formatTanggal(t.date)}
+          </td>
+          <td class="px-3.5 py-2.5 whitespace-nowrap text-slate-800 font-medium">
+            ${escapeHtml(t.category)}
+          </td>
+          <td class="px-3.5 py-2.5 text-slate-600 leading-snug">
+            ${escapeHtml(t.description || '-')}
+          </td>
+          <td class="px-3.5 py-2.5 text-right whitespace-nowrap font-semibold ${colorClass}">
+            ${sign} Rp ${formatIDR(t.amount)}
+          </td>
+          ${actionButtons}
+        </tr>
+      `;
     }
 
     function escapeHtml(str) {
