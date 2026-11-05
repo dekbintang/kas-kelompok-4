@@ -334,6 +334,12 @@ app.delete('/api/transactions/:id', requireAdmin, async (req, res) => {
   res.json({ success: true, message: 'Transaksi berhasil dihapus.' });
 });
 
+// Fallback to index.html for Vercel/Single-Page delivery
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Start server
 if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   app.listen(PORT, () => {
