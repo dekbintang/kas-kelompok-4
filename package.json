@@ -8,11 +8,16 @@
     "dev": "node --watch server.js"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "cors": "^2.8.5"
+    "@supabase/supabase-js": "^2.119.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
   },
-  "keywords": ["kas", "lpd", "kelompok4", "keuangan"],
+  "keywords": [
+    "kas",
+    "lpd",
+    "kelompok4",
+    "keuangan"
+  ],
   "author": "Kelompok 4",
   "license": "ISC"
 }
-

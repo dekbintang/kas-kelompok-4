@@ -4,57 +4,53 @@
     "subTitle": "Buku Kas Kelompok 4",
     "lpdName": "LPD",
     "adminPin": "1234",
+    "memberPin": "1111",
     "accountNumberLPD": "LPD-KL4-88921"
   },
   "transactions": [
     {
-      "id": "trx-1730784000000",
+      "id": "trx-sample-001",
       "date": "2026-11-01",
       "type": "income",
       "category": "Iuran Anggota",
       "amount": 2500000,
       "description": "Iuran kas bulanan",
-      "lpdStatus": "LPD",
       "createdAt": "2026-11-01T08:00:00.000Z"
     },
     {
-      "id": "trx-1730870400000",
+      "id": "trx-sample-002",
       "date": "2026-11-02",
       "type": "income",
       "category": "Punia / Sumbangan",
       "amount": 1000000,
       "description": "Punia sukarela",
-      "lpdStatus": "LPD",
       "createdAt": "2026-11-02T10:15:00.000Z"
     },
     {
-      "id": "trx-1730956800000",
+      "id": "trx-sample-003",
       "date": "2026-11-03",
       "type": "expense",
       "category": "Upakara & Sosial",
       "amount": 650000,
       "description": "Perlengkapan upakara bersama",
-      "lpdStatus": "LPD",
       "createdAt": "2026-11-03T14:30:00.000Z"
     },
     {
-      "id": "trx-1731043200000",
+      "id": "trx-sample-004",
       "date": "2026-11-04",
       "type": "expense",
       "category": "Operasional",
       "amount": 350000,
       "description": "Kebutuhan operasional rapat",
-      "lpdStatus": "LPD",
       "createdAt": "2026-11-04T19:00:00.000Z"
     },
     {
-      "id": "trx-1731129600000",
+      "id": "trx-sample-005",
       "date": "2026-11-05",
       "type": "income",
       "category": "Denda",
       "amount": 50000,
       "description": "Denda absen pertemuan",
-      "lpdStatus": "LPD",
       "createdAt": "2026-11-05T09:00:00.000Z"
     }
   ]

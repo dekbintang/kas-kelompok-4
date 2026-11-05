@@ -5,440 +5,483 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buku Kas Kelompok 4</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
     @media print {
       .no-print { display: none !important; }
-      body { background: #fff !important; color: #000 !important; }
-      .print-table { width: 100% !important; border-collapse: collapse !important; }
-      .print-table th, .print-table td { border: 1px solid #ccc !important; padding: 6px !important; }
-      .max-h-table { max-height: none !important; overflow: visible !important; }
+      body { background: #fff !important; }
+      .max-h-scroll { max-height: none !important; overflow: visible !important; }
     }
-    .max-h-table {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    thead th {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background-color: #f8fafc;
-    }
+    .max-h-scroll { max-height: 380px; overflow-y: auto; }
+    thead th { position: sticky; top: 0; z-index: 5; }
+    .fade-in { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-active { background: #1e293b; color: #fff; }
+    .tab-inactive { background: transparent; color: #64748b; }
+    .tab-inactive:hover { color: #1e293b; background: #f1f5f9; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+<body class="bg-slate-100 text-slate-800 min-h-screen">
 
-  <!-- Header Sederhana & Formal -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
-    <div class="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-      <div>
-        <h1 class="text-base md:text-lg font-bold text-slate-900 tracking-tight" id="headerGroupName">Buku Kas Kelompok 4</h1>
-        <p class="text-xs text-slate-500">Penyimpanan Kas LPD</p>
+  <!-- ============================== -->
+  <!-- HALAMAN LOGIN (ANGGOTA)        -->
+  <!-- ============================== -->
+  <div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm fade-in">
+      <!-- Logo / Branding -->
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-slate-900">Buku Kas Kelompok 4</h1>
+        <p class="text-sm text-slate-500 mt-1">Masukkan PIN untuk melihat catatan kas</p>
       </div>
-      <div class="no-print">
-        <button id="btnAdminAuth" onclick="openPinModal()" class="text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1.5 rounded transition">
-          <span id="adminBtnLabel">Pengurus</span>
+
+      <!-- Form Login -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">PIN Akses</label>
+          <input type="password" id="loginPin" maxlength="8" inputmode="numeric"
+            placeholder="Masukkan PIN"
+            class="w-full text-center text-lg tracking-[0.3em] font-semibold py-3 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 focus:bg-white transition"
+            onkeydown="if(event.key==='Enter') handleLogin()">
+        </div>
+        <p id="loginError" class="text-xs text-red-600 text-center hidden">PIN yang dimasukkan salah</p>
+        <button onclick="handleLogin()" id="loginBtn"
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Masuk
         </button>
       </div>
-    </div>
-  </header>
 
-  <!-- Notifikasi Mode Pengurus -->
-  <div id="bendaharaBanner" class="hidden bg-slate-800 text-white px-4 py-2 text-xs no-print">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
-      <span>Mode Pengurus Aktif</span>
-      <button onclick="logoutAdmin()" class="underline text-slate-300 hover:text-white">Keluar</button>
+      <p class="text-center text-[11px] text-slate-400 mt-5">
+        Akses terbatas untuk anggota dan pengurus Kelompok 4
+      </p>
     </div>
   </div>
 
-  <main class="max-w-5xl mx-auto px-4 py-5 space-y-4">
+  <!-- ============================== -->
+  <!-- HALAMAN UTAMA (DASHBOARD)      -->
+  <!-- ============================== -->
+  <div id="mainPage" class="hidden">
 
-    <!-- 1. RINGKASAN SALDO -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-      <!-- Saldo LPD -->
-      <div class="bg-white p-4 rounded-lg border border-slate-200 md:col-span-1 shadow-sm">
-        <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Saldo Akhir di LPD</span>
-        <div class="text-2xl font-bold text-slate-900 mt-1" id="displayBalance">Rp 0</div>
-        <p class="text-[11px] text-slate-400 mt-1" id="lastUpdatedText">Pembaruan: -</p>
-      </div>
-
-      <!-- Total Pemasukan -->
-      <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:border-slate-300 transition" onclick="switchView('income')">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Pemasukan</span>
-          <span class="text-[10px] text-slate-400 no-print">Klik untuk lihat</span>
-        </div>
-        <div class="text-xl font-bold text-emerald-800 mt-1" id="displayIncome">Rp 0</div>
-        <p class="text-[11px] text-slate-400 mt-1">Masuk ke kas LPD</p>
-      </div>
-
-      <!-- Total Pengeluaran -->
-      <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:border-slate-300 transition" onclick="switchView('expense')">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Pengeluaran</span>
-          <span class="text-[10px] text-slate-400 no-print">Klik untuk lihat</span>
-        </div>
-        <div class="text-xl font-bold text-rose-800 mt-1" id="displayExpense">Rp 0</div>
-        <p class="text-[11px] text-slate-400 mt-1">Pengeluaran kas</p>
-      </div>
-    </div>
-
-    <!-- 2. TOMBOL AKSI PENGURUS (Hanya tampil jika login) -->
-    <div id="bendaharaControls" class="hidden bg-white p-4 rounded-lg border border-slate-300 shadow-sm no-print space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Menu Pengurus</span>
-        <button onclick="openChangePinModal()" class="text-xs text-slate-500 hover:text-slate-800 underline">Ganti PIN</button>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <button onclick="openAddModal('income')" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs px-4 py-2 rounded">
-          + Catat Pemasukan
-        </button>
-        <button onclick="openAddModal('expense')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-medium text-xs px-4 py-2 rounded">
-          - Catat Pengeluaran
-        </button>
-      </div>
-    </div>
-
-    <!-- 3. PENCARIAN & FILTER -->
-    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Pencarian & Filter</span>
-        <button onclick="resetFilters()" id="btnResetFilter" class="hidden text-xs text-slate-500 hover:text-slate-800 underline">
-          Reset Filter
-        </button>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-        <!-- Cari Tanggal -->
-        <div>
-          <label class="block text-slate-600 mb-1 font-medium">Cari Tanggal:</label>
-          <input type="date" id="filterDate" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-slate-500">
-        </div>
-        <!-- Filter Kategori -->
-        <div>
-          <label class="block text-slate-600 mb-1 font-medium">Filter Kategori:</label>
-          <select id="filterCategory" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-slate-500">
-            <option value="">Semua Kategori</option>
-            <optgroup label="Pemasukan">
-              <option value="Iuran Anggota">Iuran Anggota</option>
-              <option value="Punia / Sumbangan">Punia / Sumbangan</option>
-              <option value="Denda">Denda</option>
-              <option value="Pemasukan Lainnya">Pemasukan Lainnya</option>
-            </optgroup>
-            <optgroup label="Pengeluaran">
-              <option value="Upakara & Sosial">Upakara & Sosial</option>
-              <option value="Operasional">Operasional</option>
-              <option value="Dana Duka">Dana Duka</option>
-              <option value="Pengeluaran Lainnya">Pengeluaran Lainnya</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
-
-      <!-- Tab Switcher Besar & Jelas (Mencegah Salah Satu Tenggelam) -->
-      <div class="pt-2 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2 no-print">
-        <div class="inline-flex p-1 bg-slate-100 rounded-lg text-xs font-medium space-x-1">
-          <button id="tabBtnIncome" onclick="switchView('income')" class="px-3.5 py-1.5 rounded-md text-emerald-900 bg-white shadow-sm font-semibold transition">
-            Pemasukan <span id="badgeIncomeSub" class="text-[11px] font-normal text-slate-500"></span>
-          </button>
-          <button id="tabBtnExpense" onclick="switchView('expense')" class="px-3.5 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
-            Pengeluaran <span id="badgeExpenseSub" class="text-[11px] font-normal text-slate-500"></span>
-          </button>
-          <button id="tabBtnBoth" onclick="switchView('both')" class="px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
-            Keduanya (Berdampingan)
-          </button>
-        </div>
-        <div>
-          <button onclick="window.print()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded">
-            Cetak Laporan
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. CONTAINER TABEL (BISA TAMPIL BERDAMPINGAN ATAU TAB TANPA TENGGELAM) -->
-    <div id="tablesGrid" class="space-y-4">
-
-      <!-- TABEL PEMASUKAN -->
-      <div id="sectionIncome" class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
           <div>
-            <h2 class="text-xs md:text-sm font-bold text-emerald-900 uppercase tracking-wide">Catatan Pemasukan</h2>
-            <p class="text-[11px] text-slate-500" id="incomeCountText">-</p>
+            <h1 class="text-sm font-bold text-slate-900 leading-tight" id="headerGroupName">Buku Kas Kelompok 4</h1>
+            <p class="text-[11px] text-slate-500" id="headerRole">Anggota</p>
           </div>
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase">Subtotal</span>
-            <span class="text-xs md:text-sm font-bold text-emerald-800" id="incomeSubtotal">Rp 0</span>
+        </div>
+        <div class="flex items-center gap-2 no-print">
+          <!-- Tombol Admin (hanya muncul saat role admin) -->
+          <div id="adminActions" class="hidden flex items-center gap-2">
+            <button onclick="openAddModal('income')" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-medium px-3 py-1.5 rounded-lg transition">
+              + Pemasukan
+            </button>
+            <button onclick="openAddModal('expense')" class="text-xs bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-3 py-1.5 rounded-lg transition">
+              - Pengeluaran
+            </button>
+          </div>
+          <button onclick="handleLogout()" class="text-xs text-slate-500 hover:text-slate-800 border border-slate-200 px-2.5 py-1.5 rounded-lg transition">
+            Keluar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Admin Banner -->
+    <div id="adminBanner" class="hidden bg-slate-800 text-slate-300 text-xs px-4 py-1.5 no-print">
+      <div class="max-w-5xl mx-auto flex items-center justify-between">
+        <span class="font-medium text-white">Mode Pengurus</span>
+        <div class="flex gap-3">
+          <button onclick="openChangePinModal('member')" class="underline hover:text-white">PIN Anggota</button>
+          <button onclick="openChangePinModal('admin')" class="underline hover:text-white">PIN Pengurus</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 py-5 space-y-4 fade-in">
+
+      <!-- Ringkasan Keuangan -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Saldo LPD</p>
+          <p class="text-xl md:text-2xl font-bold text-slate-900 mt-1.5 tabular-nums" id="displayBalance">Rp 0</p>
+          <p class="text-[10px] text-slate-400 mt-1.5" id="lastUpdatedText">-</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-300 transition" onclick="switchTab('income')">
+          <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Pemasukan</p>
+          <p class="text-lg md:text-xl font-bold text-emerald-700 mt-1.5 tabular-nums" id="displayIncome">Rp 0</p>
+          <p class="text-[10px] text-slate-400 mt-1.5 no-print">Lihat detail</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:border-rose-300 transition" onclick="switchTab('expense')">
+          <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Pengeluaran</p>
+          <p class="text-lg md:text-xl font-bold text-rose-700 mt-1.5 tabular-nums" id="displayExpense">Rp 0</p>
+          <p class="text-[10px] text-slate-400 mt-1.5 no-print">Lihat detail</p>
+        </div>
+      </div>
+
+      <!-- Filter & Tab Bar -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <!-- Tab Switcher -->
+          <div class="inline-flex bg-slate-100 p-0.5 rounded-lg text-xs font-medium">
+            <button id="tabIncome" onclick="switchTab('income')" class="px-3 py-1.5 rounded-md tab-active transition">Pemasukan</button>
+            <button id="tabExpense" onclick="switchTab('expense')" class="px-3 py-1.5 rounded-md tab-inactive transition">Pengeluaran</button>
+            <button id="tabBoth" onclick="switchTab('both')" class="px-3 py-1.5 rounded-md tab-inactive transition">Semua</button>
+          </div>
+
+          <div class="flex items-center gap-2 no-print">
+            <button onclick="window.print()" class="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 px-2.5 py-1.5 rounded-lg transition">
+              Cetak
+            </button>
           </div>
         </div>
 
-        <div class="max-h-table overflow-x-auto">
-          <table class="w-full text-left text-xs divide-y divide-slate-200 print-table">
-            <thead class="text-slate-600 font-semibold border-b border-slate-200">
+        <!-- Filter Row -->
+        <div class="flex flex-wrap items-end gap-2.5 text-xs">
+          <div class="flex-1 min-w-[130px]">
+            <label class="block text-slate-500 mb-1 font-medium">Tanggal</label>
+            <input type="date" id="filterDate" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800 focus:outline-none focus:bg-white focus:border-slate-400 transition">
+          </div>
+          <div class="flex-1 min-w-[130px]">
+            <label class="block text-slate-500 mb-1 font-medium">Kategori</label>
+            <select id="filterCategory" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800 focus:outline-none focus:bg-white focus:border-slate-400 transition">
+              <option value="">Semua</option>
+              <optgroup label="Pemasukan">
+                <option value="Iuran Anggota">Iuran Anggota</option>
+                <option value="Punia / Sumbangan">Punia / Sumbangan</option>
+                <option value="Denda">Denda</option>
+                <option value="Pemasukan Lainnya">Pemasukan Lainnya</option>
+              </optgroup>
+              <optgroup label="Pengeluaran">
+                <option value="Upakara & Sosial">Upakara & Sosial</option>
+                <option value="Operasional">Operasional</option>
+                <option value="Dana Duka">Dana Duka</option>
+                <option value="Pengeluaran Lainnya">Pengeluaran Lainnya</option>
+              </optgroup>
+            </select>
+          </div>
+          <button onclick="resetFilters()" id="btnReset" class="hidden text-xs text-slate-500 hover:text-slate-800 underline py-1.5">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabel Pemasukan -->
+      <div id="sectionIncome" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden fade-in">
+        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Pemasukan</h2>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="incomeCount">-</p>
+          </div>
+          <span class="text-sm font-bold text-emerald-700 tabular-nums" id="incomeSubtotal">Rp 0</span>
+        </div>
+        <div class="max-h-scroll">
+          <table class="w-full text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wide text-[11px]">
               <tr>
-                <th class="px-3 py-2 w-20">Tanggal</th>
-                <th class="px-3 py-2 w-28">Kategori</th>
-                <th class="px-3 py-2">Keterangan</th>
-                <th class="px-3 py-2 text-right w-24">Jumlah</th>
-                <th class="px-3 py-2 text-center w-16 no-print">Aksi</th>
+                <th class="text-left px-4 py-2 w-20">Tanggal</th>
+                <th class="text-left px-4 py-2 w-28">Kategori</th>
+                <th class="text-left px-4 py-2">Keterangan</th>
+                <th class="text-right px-4 py-2 w-24">Jumlah</th>
+                <th class="text-center px-4 py-2 w-16 no-print actionCol">Aksi</th>
               </tr>
             </thead>
-            <tbody id="incomeTableBody" class="divide-y divide-slate-100">
-              <tr>
-                <td colspan="5" class="px-3 py-6 text-center text-slate-400">
-                  Memuat data pemasukan...
-                </td>
-              </tr>
-            </tbody>
+            <tbody id="incomeBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- TABEL PENGELUARAN -->
-      <div id="sectionExpense" class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden hidden">
-        <div class="p-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+      <!-- Tabel Pengeluaran -->
+      <div id="sectionExpense" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hidden fade-in">
+        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h2 class="text-xs md:text-sm font-bold text-rose-900 uppercase tracking-wide">Catatan Pengeluaran</h2>
-            <p class="text-[11px] text-slate-500" id="expenseCountText">-</p>
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Pengeluaran</h2>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="expenseCount">-</p>
           </div>
-          <div class="text-right">
-            <span class="text-[10px] text-slate-400 block uppercase">Subtotal</span>
-            <span class="text-xs md:text-sm font-bold text-rose-800" id="expenseSubtotal">Rp 0</span>
-          </div>
+          <span class="text-sm font-bold text-rose-700 tabular-nums" id="expenseSubtotal">Rp 0</span>
         </div>
-
-        <div class="max-h-table overflow-x-auto">
-          <table class="w-full text-left text-xs divide-y divide-slate-200 print-table">
-            <thead class="text-slate-600 font-semibold border-b border-slate-200">
+        <div class="max-h-scroll">
+          <table class="w-full text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wide text-[11px]">
               <tr>
-                <th class="px-3 py-2 w-20">Tanggal</th>
-                <th class="px-3 py-2 w-28">Kategori</th>
-                <th class="px-3 py-2">Keterangan</th>
-                <th class="px-3 py-2 text-right w-24">Jumlah</th>
-                <th class="px-3 py-2 text-center w-16 no-print">Aksi</th>
+                <th class="text-left px-4 py-2 w-20">Tanggal</th>
+                <th class="text-left px-4 py-2 w-28">Kategori</th>
+                <th class="text-left px-4 py-2">Keterangan</th>
+                <th class="text-right px-4 py-2 w-24">Jumlah</th>
+                <th class="text-center px-4 py-2 w-16 no-print actionCol">Aksi</th>
               </tr>
             </thead>
-            <tbody id="expenseTableBody" class="divide-y divide-slate-100">
-              <tr>
-                <td colspan="5" class="px-3 py-6 text-center text-slate-400">
-                  Memuat data pengeluaran...
-                </td>
-              </tr>
-            </tbody>
+            <tbody id="expenseBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
           </table>
         </div>
       </div>
 
-    </div>
-
-    <!-- Footer Bersih -->
-    <footer class="text-center text-xs text-slate-400 pt-3 pb-6">
-      Buku Kas Kelompok 4
-    </footer>
-
-  </main>
-
-  <!-- MODAL PIN PENGURUS -->
-  <div id="pinModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg max-w-xs w-full p-5 border border-slate-300 shadow-lg space-y-3">
-      <h3 class="font-bold text-sm text-slate-900 text-center">Masuk Akses Pengurus</h3>
-      <div>
-        <label class="block text-xs text-slate-600 mb-1">PIN Pengurus:</label>
-        <input type="password" id="inputPin" maxlength="6" inputmode="numeric" placeholder="1234" class="w-full text-center text-xl font-bold py-1.5 border border-slate-300 rounded focus:outline-none focus:border-slate-600">
-      </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button onclick="closePinModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 rounded">Batal</button>
-        <button onclick="submitPin()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs py-2 rounded">Masuk</button>
-      </div>
-    </div>
+      <footer class="text-center text-[11px] text-slate-400 pt-2 pb-6">Buku Kas Kelompok 4 &mdash; Penyimpanan LPD</footer>
+    </main>
   </div>
 
-  <!-- MODAL INPUT / EDIT TRANSAKSI -->
-  <div id="trxModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-lg max-w-sm w-full p-5 border border-slate-300 shadow-lg space-y-3 my-6">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+  <!-- MODAL: INPUT / EDIT TRANSAKSI -->
+  <div id="trxModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5 shadow-xl space-y-3 my-6 fade-in">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
         <h3 id="trxModalTitle" class="font-bold text-slate-900 text-sm">Catat Transaksi</h3>
-        <button onclick="closeTrxModal()" class="text-slate-400 hover:text-slate-600 text-base leading-none">&times;</button>
+        <button onclick="closeTrxModal()" class="text-slate-400 hover:text-slate-700 text-lg leading-none">&times;</button>
       </div>
-
       <form id="trxForm" onsubmit="handleTrxSubmit(event)" class="space-y-3 text-xs">
         <input type="hidden" id="editTrxId" value="">
-
-        <!-- Tipe Transaksi -->
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Jenis Transaksi:</label>
+          <label class="block font-medium text-slate-600 mb-1">Jenis</label>
           <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center justify-center gap-1.5 p-2 rounded border border-slate-300 cursor-pointer has-[:checked]:bg-slate-100 has-[:checked]:border-slate-600 font-medium text-slate-800">
+            <label class="flex items-center justify-center p-2 rounded-lg border border-slate-200 cursor-pointer has-[:checked]:bg-slate-900 has-[:checked]:text-white has-[:checked]:border-slate-900 font-medium transition">
               <input type="radio" name="trxType" value="income" checked onchange="handleTypeChange('income')" class="hidden">
               <span>Pemasukan</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 p-2 rounded border border-slate-300 cursor-pointer has-[:checked]:bg-slate-100 has-[:checked]:border-slate-600 font-medium text-slate-800">
+            <label class="flex items-center justify-center p-2 rounded-lg border border-slate-200 cursor-pointer has-[:checked]:bg-slate-900 has-[:checked]:text-white has-[:checked]:border-slate-900 font-medium transition">
               <input type="radio" name="trxType" value="expense" onchange="handleTypeChange('expense')" class="hidden">
               <span>Pengeluaran</span>
             </label>
           </div>
         </div>
-
-        <!-- Tanggal -->
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Tanggal:</label>
-          <input type="date" id="trxDate" required class="w-full border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-600">
+          <label class="block font-medium text-slate-600 mb-1">Tanggal</label>
+          <input type="date" id="trxDate" required class="w-full border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400 transition">
         </div>
-
-        <!-- Nominal -->
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Jumlah (Rp):</label>
-          <input type="number" id="trxAmount" placeholder="Contoh: 500000" min="1" required class="w-full border border-slate-300 rounded px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:outline-none focus:border-slate-600">
+          <label class="block font-medium text-slate-600 mb-1">Jumlah (Rp)</label>
+          <input type="number" id="trxAmount" placeholder="500000" min="1" required class="w-full border border-slate-200 rounded-lg px-3 py-2 font-semibold bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400 transition">
         </div>
-
-        <!-- Kategori -->
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Kategori:</label>
-          <select id="trxCategory" class="w-full border border-slate-300 rounded px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-600">
-            <!-- Diisi JavaScript -->
-          </select>
+          <label class="block font-medium text-slate-600 mb-1">Kategori</label>
+          <select id="trxCategory" class="w-full border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400 transition"></select>
         </div>
-
-        <!-- Keterangan -->
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Keterangan:</label>
-          <textarea id="trxDesc" rows="2" placeholder="Tuliskan rincian transaksi" class="w-full border border-slate-300 rounded p-2 text-xs text-slate-800 focus:outline-none focus:border-slate-600"></textarea>
+          <label class="block font-medium text-slate-600 mb-1">Keterangan</label>
+          <textarea id="trxDesc" rows="2" placeholder="Rincian transaksi" class="w-full border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400 transition"></textarea>
         </div>
-
-        <div class="flex items-center justify-end gap-2 pt-2">
-          <button type="button" onclick="closeTrxModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium">Batal</button>
-          <button type="submit" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded font-medium">Simpan</button>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeTrxModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition">Simpan</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL GANTI PIN -->
-  <div id="changePinModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg max-w-xs w-full p-5 border border-slate-300 shadow-lg space-y-3">
-      <h3 class="font-bold text-xs uppercase text-slate-800 tracking-wide text-center">Ganti PIN Pengurus</h3>
+  <!-- MODAL: GANTI PIN -->
+  <div id="changePinModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-xs w-full p-5 shadow-xl space-y-3 fade-in">
+      <h3 class="font-bold text-sm text-slate-900 text-center" id="changePinTitle">Ganti PIN</h3>
+      <input type="hidden" id="changePinTarget" value="admin">
       <div>
-        <label class="block text-xs text-slate-600 mb-1">PIN Baru (min 4 angka):</label>
-        <input type="password" id="inputNewPin" maxlength="6" inputmode="numeric" class="w-full text-center text-lg font-bold py-1.5 border border-slate-300 rounded">
+        <label class="block text-xs text-slate-600 mb-1">PIN Baru (minimal 4 angka)</label>
+        <input type="password" id="inputNewPin" maxlength="8" inputmode="numeric" class="w-full text-center text-xl font-bold py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400">
       </div>
       <div class="grid grid-cols-2 gap-2 pt-1">
-        <button onclick="closeChangePinModal()" class="w-full bg-slate-100 py-1.5 rounded text-xs text-slate-700">Batal</button>
-        <button onclick="submitChangePin()" class="w-full bg-slate-800 text-white py-1.5 rounded text-xs">Simpan</button>
+        <button onclick="closeChangePinModal()" class="w-full bg-slate-100 hover:bg-slate-200 py-2 rounded-lg text-xs font-medium text-slate-700 transition">Batal</button>
+        <button onclick="submitChangePin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-medium transition">Simpan</button>
       </div>
     </div>
   </div>
 
   <script>
-    let adminToken = localStorage.getItem('kas_admin_pin') || null;
+    // ============================================================
+    // STATE
+    // ============================================================
+    let userRole = null; // 'member' or 'admin'
+    let userPin = null;
     let rawTransactions = [];
-    let activeTab = 'income'; // default view: 'income', 'expense', or 'both'
+    let activeTab = 'income';
 
-    const incomeCategories = [
-      "Iuran Anggota",
-      "Punia / Sumbangan",
-      "Denda",
-      "Pemasukan Lainnya"
-    ];
+    const incomeCategories = ["Iuran Anggota", "Punia / Sumbangan", "Denda", "Pemasukan Lainnya"];
+    const expenseCategories = ["Upakara & Sosial", "Operasional", "Dana Duka", "Pengeluaran Lainnya"];
 
-    const expenseCategories = [
-      "Upakara & Sosial",
-      "Operasional",
-      "Dana Duka",
-      "Pengeluaran Lainnya"
-    ];
+    // ============================================================
+    // UTILS
+    // ============================================================
+    const formatIDR = n => new Intl.NumberFormat('id-ID').format(n || 0);
+    const formatTanggal = d => {
+      if (!d) return '-';
+      const p = d.split('-');
+      return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
+    };
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
 
-    function formatIDR(num) {
-      return new Intl.NumberFormat('id-ID').format(num || 0);
-    }
+    // ============================================================
+    // LOGIN
+    // ============================================================
+    async function handleLogin() {
+      const pin = document.getElementById('loginPin').value.trim();
+      if (!pin) return;
 
-    function formatTanggal(dateStr) {
-      if (!dateStr) return '-';
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-      }
-      return dateStr;
-    }
+      const btn = document.getElementById('loginBtn');
+      const errEl = document.getElementById('loginError');
+      btn.disabled = true;
+      btn.textContent = 'Memverifikasi...';
+      errEl.classList.add('hidden');
 
-    async function loadData() {
+      // Try admin first, then member
+      let role = null;
       try {
-        const resSum = await fetch('/api/summary');
-        const summary = await resSum.json();
-
-        if (summary.success) {
-          document.getElementById('headerGroupName').innerText = summary.groupName || 'Buku Kas Kelompok 4';
-          document.getElementById('displayBalance').innerText = 'Rp ' + formatIDR(summary.balance);
-          document.getElementById('displayIncome').innerText = 'Rp ' + formatIDR(summary.totalIncome);
-          document.getElementById('displayExpense').innerText = 'Rp ' + formatIDR(summary.totalExpense);
-
-          if (summary.lastUpdated) {
-            const d = new Date(summary.lastUpdated);
-            document.getElementById('lastUpdatedText').innerText = 'Pembaruan: ' + d.toLocaleDateString('id-ID');
+        const resAdmin = await fetch('/api/auth/verify-pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        if (resAdmin.ok) {
+          role = 'admin';
+        } else {
+          const resMember = await fetch('/api/auth/member', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin })
+          });
+          if (resMember.ok) {
+            role = 'member';
           }
         }
+      } catch (e) {
+        console.error(e);
+      }
 
-        const resTrx = await fetch('/api/transactions');
+      btn.disabled = false;
+      btn.textContent = 'Masuk';
+
+      if (role) {
+        userRole = role;
+        userPin = pin;
+        sessionStorage.setItem('kas_role', role);
+        sessionStorage.setItem('kas_pin', pin);
+        showDashboard();
+      } else {
+        errEl.classList.remove('hidden');
+        document.getElementById('loginPin').value = '';
+        document.getElementById('loginPin').focus();
+      }
+    }
+
+    function handleLogout() {
+      userRole = null;
+      userPin = null;
+      sessionStorage.removeItem('kas_role');
+      sessionStorage.removeItem('kas_pin');
+      document.getElementById('mainPage').classList.add('hidden');
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('loginPin').value = '';
+    }
+
+    function showDashboard() {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainPage').classList.remove('hidden');
+
+      const isAdmin = userRole === 'admin';
+      document.getElementById('headerRole').textContent = isAdmin ? 'Pengurus' : 'Anggota';
+      document.getElementById('adminActions').classList.toggle('hidden', !isAdmin);
+      document.getElementById('adminBanner').classList.toggle('hidden', !isAdmin);
+
+      loadData();
+    }
+
+    // Check session on load
+    (function checkSession() {
+      const savedRole = sessionStorage.getItem('kas_role');
+      const savedPin = sessionStorage.getItem('kas_pin');
+      if (savedRole && savedPin) {
+        userRole = savedRole;
+        userPin = savedPin;
+        showDashboard();
+      }
+    })();
+
+    // ============================================================
+    // DATA LOADING
+    // ============================================================
+    async function loadData() {
+      try {
+        const [resSum, resTrx] = await Promise.all([
+          fetch('/api/summary'),
+          fetch('/api/transactions')
+        ]);
+        const summary = await resSum.json();
         const trxData = await resTrx.json();
+
+        if (summary.success) {
+          document.getElementById('displayBalance').textContent = 'Rp ' + formatIDR(summary.balance);
+          document.getElementById('displayIncome').textContent = 'Rp ' + formatIDR(summary.totalIncome);
+          document.getElementById('displayExpense').textContent = 'Rp ' + formatIDR(summary.totalExpense);
+          if (summary.lastUpdated) {
+            document.getElementById('lastUpdatedText').textContent = 'Per ' + new Date(summary.lastUpdated).toLocaleDateString('id-ID');
+          }
+        }
 
         if (trxData.success) {
           rawTransactions = trxData.data || [];
           applyFilters();
         }
       } catch (err) {
-        console.error('Error loadData:', err);
+        console.error('loadData error:', err);
       }
     }
 
-    function switchView(tab) {
+    // ============================================================
+    // TABS
+    // ============================================================
+    function switchTab(tab) {
       activeTab = tab;
-      const secIncome = document.getElementById('sectionIncome');
-      const secExpense = document.getElementById('sectionExpense');
-      const grid = document.getElementById('tablesGrid');
-
-      const btnInc = document.getElementById('tabBtnIncome');
-      const btnExp = document.getElementById('tabBtnExpense');
-      const btnBoth = document.getElementById('tabBtnBoth');
-
-      // Reset style tombol tab
-      [btnInc, btnExp, btnBoth].forEach(btn => {
-        btn.className = "px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition";
+      const tabs = { income: 'tabIncome', expense: 'tabExpense', both: 'tabBoth' };
+      Object.entries(tabs).forEach(([key, id]) => {
+        document.getElementById(id).className = 'px-3 py-1.5 rounded-md transition ' + (key === tab ? 'tab-active' : 'tab-inactive');
       });
+
+      const secI = document.getElementById('sectionIncome');
+      const secE = document.getElementById('sectionExpense');
 
       if (tab === 'income') {
-        btnInc.className = "px-3.5 py-1.5 rounded-md text-emerald-950 bg-white shadow-sm font-semibold transition";
-        secIncome.classList.remove('hidden');
-        secExpense.classList.add('hidden');
-        grid.className = "space-y-4";
+        secI.classList.remove('hidden');
+        secE.classList.add('hidden');
       } else if (tab === 'expense') {
-        btnExp.className = "px-3.5 py-1.5 rounded-md text-rose-950 bg-white shadow-sm font-semibold transition";
-        secIncome.classList.add('hidden');
-        secExpense.classList.remove('hidden');
-        grid.className = "space-y-4";
-      } else if (tab === 'both') {
-        btnBoth.className = "px-3.5 py-1.5 rounded-md text-slate-900 bg-white shadow-sm font-semibold transition";
-        secIncome.classList.remove('hidden');
-        secExpense.classList.remove('hidden');
-        // Di layar komputer / laptop otomatis berdampingan 2 kolom!
-        grid.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start";
+        secI.classList.add('hidden');
+        secE.classList.remove('hidden');
+      } else {
+        secI.classList.remove('hidden');
+        secE.classList.remove('hidden');
       }
     }
 
+    // ============================================================
+    // FILTERS
+    // ============================================================
     function applyFilters() {
-      const selectedDate = document.getElementById('filterDate').value;
-      const selectedCat = document.getElementById('filterCategory').value;
-      const btnReset = document.getElementById('btnResetFilter');
+      const fDate = document.getElementById('filterDate').value;
+      const fCat = document.getElementById('filterCategory').value;
+      document.getElementById('btnReset').classList.toggle('hidden', !(fDate || fCat));
 
-      const isFiltered = Boolean(selectedDate || selectedCat);
-      if (isFiltered) {
-        btnReset.classList.remove('hidden');
-      } else {
-        btnReset.classList.add('hidden');
-      }
-
-      const filtered = rawTransactions.filter(item => {
-        if (selectedDate && item.date !== selectedDate) return false;
-        if (selectedCat && item.category !== selectedCat) return false;
+      const filtered = rawTransactions.filter(t => {
+        if (fDate && t.date !== fDate) return false;
+        if (fCat && t.category !== fCat) return false;
         return true;
       });
-
       renderData(filtered);
     }
 
@@ -448,234 +491,106 @@
       applyFilters();
     }
 
+    // ============================================================
+    // RENDERING
+    // ============================================================
     function renderData(list) {
-      const isAdmin = Boolean(adminToken);
-
+      const isAdmin = userRole === 'admin';
       const incomes = list.filter(t => t.type === 'income');
       const expenses = list.filter(t => t.type === 'expense');
 
-      const totalInc = incomes.reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const totalExp = expenses.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const totalInc = incomes.reduce((s, t) => s + Number(t.amount), 0);
+      const totalExp = expenses.reduce((s, t) => s + Number(t.amount), 0);
 
-      document.getElementById('incomeSubtotal').innerText = 'Rp ' + formatIDR(totalInc);
-      document.getElementById('incomeCountText').innerText = `${incomes.length} catatan`;
-      document.getElementById('badgeIncomeSub').innerText = `(Rp ${formatIDR(totalInc)})`;
+      document.getElementById('incomeSubtotal').textContent = 'Rp ' + formatIDR(totalInc);
+      document.getElementById('incomeCount').textContent = incomes.length + ' catatan';
+      document.getElementById('expenseSubtotal').textContent = 'Rp ' + formatIDR(totalExp);
+      document.getElementById('expenseCount').textContent = expenses.length + ' catatan';
 
-      document.getElementById('expenseSubtotal').innerText = 'Rp ' + formatIDR(totalExp);
-      document.getElementById('expenseCountText').innerText = `${expenses.length} catatan`;
-      document.getElementById('badgeExpenseSub').innerText = `(Rp ${formatIDR(totalExp)})`;
-
-      // Render Pemasukan
-      const tbodyIncome = document.getElementById('incomeTableBody');
-      if (incomes.length === 0) {
-        tbodyIncome.innerHTML = `
-          <tr>
-            <td colspan="5" class="px-3 py-6 text-center text-slate-400">
-              Tidak ada catatan pemasukan.
-            </td>
-          </tr>
-        `;
-      } else {
-        tbodyIncome.innerHTML = incomes.map(t => renderRow(t, isAdmin, 'text-emerald-800', '+')).join('');
-      }
-
-      // Render Pengeluaran
-      const tbodyExpense = document.getElementById('expenseTableBody');
-      if (expenses.length === 0) {
-        tbodyExpense.innerHTML = `
-          <tr>
-            <td colspan="5" class="px-3 py-6 text-center text-slate-400">
-              Tidak ada catatan pengeluaran.
-            </td>
-          </tr>
-        `;
-      } else {
-        tbodyExpense.innerHTML = expenses.map(t => renderRow(t, isAdmin, 'text-rose-800', '-')).join('');
-      }
-
-      // Pertahankan status view tab saat ini
-      switchView(activeTab);
+      renderTable('incomeBody', incomes, isAdmin, 'text-emerald-700', '+');
+      renderTable('expenseBody', expenses, isAdmin, 'text-rose-700', '-');
+      switchTab(activeTab);
     }
 
-    function renderRow(t, isAdmin, colorClass, sign) {
-      const actionButtons = isAdmin ? `
-        <td class="px-3 py-2 text-center no-print whitespace-nowrap">
-          <button onclick="openEditModal('${t.id}')" class="text-slate-600 hover:text-slate-900 underline mr-1.5">Edit</button>
-          <button onclick="deleteTransaction('${t.id}')" class="text-rose-700 hover:text-rose-900 underline">Hapus</button>
-        </td>
-      ` : `
-        <td class="px-3 py-2 text-center text-slate-400 no-print">-</td>
-      `;
-
-      return `
-        <tr class="hover:bg-slate-50/80">
-          <td class="px-3 py-2 whitespace-nowrap font-medium text-slate-700">
-            ${formatTanggal(t.date)}
-          </td>
-          <td class="px-3 py-2 whitespace-nowrap text-slate-800 font-medium">
-            ${escapeHtml(t.category)}
-          </td>
-          <td class="px-3 py-2 text-slate-600 leading-snug">
-            ${escapeHtml(t.description || '-')}
-          </td>
-          <td class="px-3 py-2 text-right whitespace-nowrap font-semibold ${colorClass}">
-            ${sign} Rp ${formatIDR(t.amount)}
-          </td>
-          ${actionButtons}
-        </tr>
-      `;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function updateAdminUI() {
-      const banner = document.getElementById('bendaharaBanner');
-      const controls = document.getElementById('bendaharaControls');
-      const adminBtnLabel = document.getElementById('adminBtnLabel');
-
-      if (adminToken) {
-        banner.classList.remove('hidden');
-        controls.classList.remove('hidden');
-        adminBtnLabel.innerText = 'Keluar Pengurus';
-      } else {
-        banner.classList.add('hidden');
-        controls.classList.add('hidden');
-        adminBtnLabel.innerText = 'Pengurus';
-      }
-      applyFilters();
-    }
-
-    function openPinModal() {
-      if (adminToken) {
-        if (confirm('Keluar dari mode Pengurus?')) {
-          logoutAdmin();
-        }
+    function renderTable(tbodyId, items, isAdmin, colorCls, sign) {
+      const tbody = document.getElementById(tbodyId);
+      if (!items.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">Belum ada catatan.</td></tr>`;
         return;
       }
-      document.getElementById('inputPin').value = '';
-      document.getElementById('pinModal').classList.remove('hidden');
-      document.getElementById('inputPin').focus();
+      tbody.innerHTML = items.map(t => `
+        <tr class="hover:bg-slate-50/60 transition">
+          <td class="px-4 py-2.5 whitespace-nowrap font-medium">${formatTanggal(t.date)}</td>
+          <td class="px-4 py-2.5 whitespace-nowrap font-medium text-slate-800">${esc(t.category)}</td>
+          <td class="px-4 py-2.5 text-slate-500">${esc(t.description || '-')}</td>
+          <td class="px-4 py-2.5 text-right whitespace-nowrap font-semibold ${colorCls}">${sign} Rp ${formatIDR(t.amount)}</td>
+          <td class="px-4 py-2.5 text-center no-print">${isAdmin
+            ? `<button onclick="openEditModal('${t.id}')" class="text-slate-500 hover:text-slate-800 underline mr-1">Edit</button><button onclick="deleteTransaction('${t.id}')" class="text-rose-600 hover:text-rose-800 underline">Hapus</button>`
+            : '<span class="text-slate-300">-</span>'
+          }</td>
+        </tr>
+      `).join('');
     }
 
-    function closePinModal() {
-      document.getElementById('pinModal').classList.add('hidden');
-    }
-
-    async function submitPin() {
-      const pin = document.getElementById('inputPin').value;
-      if (!pin) return alert('Masukkan PIN terlebih dahulu.');
-
-      try {
-        const res = await fetch('/api/auth/verify-pin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pin })
-        });
-        const result = await res.json();
-        if (result.success) {
-          adminToken = pin;
-          localStorage.setItem('kas_admin_pin', pin);
-          closePinModal();
-          updateAdminUI();
-        } else {
-          alert('PIN salah.');
-        }
-      } catch (err) {
-        alert('Gagal verifikasi PIN.');
-      }
-    }
-
-    function logoutAdmin() {
-      adminToken = null;
-      localStorage.removeItem('kas_admin_pin');
-      updateAdminUI();
-    }
-
+    // ============================================================
+    // TRANSACTION CRUD
+    // ============================================================
     function handleTypeChange(type) {
-      const catSelect = document.getElementById('trxCategory');
-      const categories = type === 'income' ? incomeCategories : expenseCategories;
-      catSelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+      const sel = document.getElementById('trxCategory');
+      const cats = type === 'income' ? incomeCategories : expenseCategories;
+      sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
-    function openAddModal(type = 'income') {
+    function openAddModal(type) {
       document.getElementById('editTrxId').value = '';
-      document.getElementById('trxModalTitle').innerText = type === 'income' ? 'Catat Pemasukan Kas' : 'Catat Pengeluaran Kas';
+      document.getElementById('trxModalTitle').textContent = type === 'income' ? 'Catat Pemasukan' : 'Catat Pengeluaran';
       document.getElementById('trxDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('trxAmount').value = '';
       document.getElementById('trxDesc').value = '';
-
-      const radio = document.querySelector(`input[name="trxType"][value="${type}"]`);
-      if (radio) radio.checked = true;
+      document.querySelector(`input[name="trxType"][value="${type}"]`).checked = true;
       handleTypeChange(type);
-
       document.getElementById('trxModal').classList.remove('hidden');
     }
 
     function openEditModal(id) {
-      const t = rawTransactions.find(item => item.id === id);
+      const t = rawTransactions.find(x => x.id === id);
       if (!t) return;
-
       document.getElementById('editTrxId').value = t.id;
-      document.getElementById('trxModalTitle').innerText = 'Edit Transaksi';
+      document.getElementById('trxModalTitle').textContent = 'Edit Transaksi';
       document.getElementById('trxDate').value = t.date;
       document.getElementById('trxAmount').value = t.amount;
       document.getElementById('trxDesc').value = t.description || '';
-
-      const radio = document.querySelector(`input[name="trxType"][value="${t.type}"]`);
-      if (radio) radio.checked = true;
+      document.querySelector(`input[name="trxType"][value="${t.type}"]`).checked = true;
       handleTypeChange(t.type);
       document.getElementById('trxCategory').value = t.category;
-
       document.getElementById('trxModal').classList.remove('hidden');
     }
 
-    function closeTrxModal() {
-      document.getElementById('trxModal').classList.add('hidden');
-    }
+    function closeTrxModal() { document.getElementById('trxModal').classList.add('hidden'); }
 
     async function handleTrxSubmit(e) {
       e.preventDefault();
-      if (!adminToken) return alert('Sesi habis. Silakan login kembali.');
+      if (userRole !== 'admin') return alert('Akses ditolak.');
 
       const id = document.getElementById('editTrxId').value;
-      const type = document.querySelector('input[name="trxType"]:checked').value;
-      const date = document.getElementById('trxDate').value;
-      const amount = document.getElementById('trxAmount').value;
-      const category = document.getElementById('trxCategory').value;
-      const description = document.getElementById('trxDesc').value;
-
-      const payload = { type, date, amount, category, description };
-      const url = id ? `/api/transactions/${id}` : '/api/transactions';
-      const method = id ? 'PUT' : 'POST';
+      const payload = {
+        type: document.querySelector('input[name="trxType"]:checked').value,
+        date: document.getElementById('trxDate').value,
+        amount: document.getElementById('trxAmount').value,
+        category: document.getElementById('trxCategory').value,
+        description: document.getElementById('trxDesc').value
+      };
 
       try {
-        const res = await fetch(url, {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            'x-admin-pin': adminToken
-          },
+        const res = await fetch(id ? `/api/transactions/${id}` : '/api/transactions', {
+          method: id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-pin': userPin },
           body: JSON.stringify(payload)
         });
-
         const data = await res.json();
-        if (data.success) {
-          closeTrxModal();
-          loadData();
-        } else {
-          alert(data.message || 'Gagal menyimpan transaksi.');
-        }
-      } catch (err) {
-        alert('Terjadi kesalahan jaringan.');
-      }
+        if (data.success) { closeTrxModal(); loadData(); }
+        else alert(data.message || 'Gagal menyimpan.');
+      } catch (err) { alert('Kesalahan jaringan.'); }
     }
 
     async function deleteTransaction(id) {
@@ -683,57 +598,45 @@
       try {
         const res = await fetch(`/api/transactions/${id}`, {
           method: 'DELETE',
-          headers: { 'x-admin-pin': adminToken }
+          headers: { 'x-admin-pin': userPin }
         });
         const data = await res.json();
-        if (data.success) {
-          loadData();
-        } else {
-          alert(data.message || 'Gagal menghapus transaksi.');
-        }
-      } catch (err) {
-        alert('Gagal menghapus transaksi.');
-      }
+        if (data.success) loadData();
+        else alert(data.message || 'Gagal menghapus.');
+      } catch (err) { alert('Gagal menghapus.'); }
     }
 
-    function openChangePinModal() {
+    // ============================================================
+    // CHANGE PIN
+    // ============================================================
+    function openChangePinModal(target) {
+      document.getElementById('changePinTarget').value = target;
+      document.getElementById('changePinTitle').textContent = target === 'member' ? 'Ganti PIN Anggota' : 'Ganti PIN Pengurus';
       document.getElementById('inputNewPin').value = '';
       document.getElementById('changePinModal').classList.remove('hidden');
     }
 
-    function closeChangePinModal() {
-      document.getElementById('changePinModal').classList.add('hidden');
-    }
+    function closeChangePinModal() { document.getElementById('changePinModal').classList.add('hidden'); }
 
     async function submitChangePin() {
       const newPin = document.getElementById('inputNewPin').value;
+      const target = document.getElementById('changePinTarget').value;
       if (!newPin || newPin.length < 4) return alert('PIN baru minimal 4 angka.');
 
       try {
         const res = await fetch('/api/auth/change-pin', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-admin-pin': adminToken
-          },
-          body: JSON.stringify({ newPin })
+          headers: { 'Content-Type': 'application/json', 'x-admin-pin': userPin },
+          body: JSON.stringify({ newPin, target })
         });
         const data = await res.json();
         if (data.success) {
-          adminToken = newPin;
-          localStorage.setItem('kas_admin_pin', newPin);
+          if (target === 'admin') { userPin = newPin; sessionStorage.setItem('kas_pin', newPin); }
           closeChangePinModal();
-          alert('PIN berhasil diperbarui.');
-        } else {
-          alert(data.message || 'Gagal mengganti PIN.');
-        }
-      } catch (err) {
-        alert('Terjadi kesalahan.');
-      }
+          alert(data.message);
+        } else { alert(data.message || 'Gagal.'); }
+      } catch (err) { alert('Terjadi kesalahan.'); }
     }
-
-    updateAdminUI();
-    loadData();
   </script>
 </body>
 </html>
