@@ -9,12 +9,14 @@ const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data', 'kas.json');
 
 // Storage mode: 'supabase' or 'file'
-const STORAGE_MODE = process.env.STORAGE_MODE || 'file';
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY;
+const isSupabaseConfigured = Boolean(process.env.SUPABASE_URL && supabaseKey);
+const STORAGE_MODE = process.env.STORAGE_MODE || (isSupabaseConfigured ? 'supabase' : 'file');
 
 // Supabase client (only initialized if STORAGE_MODE === 'supabase')
 let supabase = null;
-if (STORAGE_MODE === 'supabase' && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
-  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+if (STORAGE_MODE === 'supabase' && isSupabaseConfigured) {
+  supabase = createClient(process.env.SUPABASE_URL, supabaseKey);
   console.log('Mode penyimpanan: Supabase');
 } else {
   console.log('Mode penyimpanan: File lokal (data/kas.json)');
