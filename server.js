@@ -150,8 +150,7 @@ app.post('/api/transactions', requireAdmin, (req, res) => {
     category: category.trim(),
     amount: numAmount,
     description: (description || '').trim(),
-    // Ketentuan khusus: Semua pemasukan tercatat disimpan di LPD
-    lpdStatus: type === 'income' ? 'Tersimpan di LPD' : 'Ditarik dari LPD',
+    lpdStatus: 'LPD',
     createdAt: new Date().toISOString()
   };
 
@@ -202,7 +201,7 @@ app.put('/api/transactions/:id', requireAdmin, (req, res) => {
     category: category.trim(),
     description: (description || '').trim(),
     date: date,
-    lpdStatus: type === 'income' ? 'Tersimpan di LPD' : 'Ditarik dari LPD',
+    lpdStatus: 'LPD',
     updatedAt: new Date().toISOString()
   };
 
@@ -218,3 +217,4 @@ if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
 }
 
 module.exports = app;
+
