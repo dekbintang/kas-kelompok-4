@@ -32,14 +32,7 @@ INSERT INTO settings (key, value) VALUES
   ('admin_pin', '1234')
 ON CONFLICT (key) DO NOTHING;
 
--- 4. Data Contoh Transaksi (Opsional - boleh dihapus)
-INSERT INTO transactions (id, date, type, category, amount, description) VALUES
-  ('trx-sample-001', '2026-11-01', 'income', 'Iuran Anggota', 2500000, 'Iuran kas bulanan'),
-  ('trx-sample-002', '2026-11-02', 'income', 'Punia / Sumbangan', 1000000, 'Punia sukarela'),
-  ('trx-sample-003', '2026-11-03', 'expense', 'Upakara & Sosial', 650000, 'Perlengkapan upakara bersama'),
-  ('trx-sample-004', '2026-11-04', 'expense', 'Operasional', 350000, 'Kebutuhan operasional rapat'),
-  ('trx-sample-005', '2026-11-05', 'income', 'Denda', 50000, 'Denda absen pertemuan')
-ON CONFLICT (id) DO NOTHING;
+-- 4. Data transaksi dikosongkan (diisi oleh Pengurus melalui web)
 
 -- 5. Enable Row Level Security (RLS) - Opsional untuk keamanan tambahan
 -- ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
@@ -48,3 +41,4 @@ ON CONFLICT (id) DO NOTHING;
 -- 6. Policy: Allow all operations via service_role key (backend)
 -- CREATE POLICY "Allow all for service role" ON transactions FOR ALL USING (true);
 -- CREATE POLICY "Allow all for service role" ON settings FOR ALL USING (true);
+

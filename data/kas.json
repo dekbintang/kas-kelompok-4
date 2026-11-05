@@ -7,51 +7,5 @@
     "memberPin": "1111",
     "accountNumberLPD": "LPD-KL4-88921"
   },
-  "transactions": [
-    {
-      "id": "trx-sample-001",
-      "date": "2026-11-01",
-      "type": "income",
-      "category": "Iuran Anggota",
-      "amount": 2500000,
-      "description": "Iuran kas bulanan",
-      "createdAt": "2026-11-01T08:00:00.000Z"
-    },
-    {
-      "id": "trx-sample-002",
-      "date": "2026-11-02",
-      "type": "income",
-      "category": "Punia / Sumbangan",
-      "amount": 1000000,
-      "description": "Punia sukarela",
-      "createdAt": "2026-11-02T10:15:00.000Z"
-    },
-    {
-      "id": "trx-sample-003",
-      "date": "2026-11-03",
-      "type": "expense",
-      "category": "Upakara & Sosial",
-      "amount": 650000,
-      "description": "Perlengkapan upakara bersama",
-      "createdAt": "2026-11-03T14:30:00.000Z"
-    },
-    {
-      "id": "trx-sample-004",
-      "date": "2026-11-04",
-      "type": "expense",
-      "category": "Operasional",
-      "amount": 350000,
-      "description": "Kebutuhan operasional rapat",
-      "createdAt": "2026-11-04T19:00:00.000Z"
-    },
-    {
-      "id": "trx-sample-005",
-      "date": "2026-11-05",
-      "type": "income",
-      "category": "Denda",
-      "amount": 50000,
-      "description": "Denda absen pertemuan",
-      "createdAt": "2026-11-05T09:00:00.000Z"
-    }
-  ]
+  "transactions": []
 }
