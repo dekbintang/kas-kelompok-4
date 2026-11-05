@@ -105,12 +105,8 @@
 
       <!-- Panel Aksi Pengurus (Hanya Muncul Saat Login Sebagai Pengurus) -->
       <div id="adminControls" class="hidden bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 no-print">
-        <div class="flex items-center justify-between">
+        <div>
           <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Menu Pengurus</span>
-          <div class="flex items-center gap-3 text-xs">
-            <button onclick="openChangePinModal('member')" class="text-slate-500 hover:text-slate-900 underline">Ganti PIN Anggota</button>
-            <button onclick="openChangePinModal('admin')" class="text-slate-500 hover:text-slate-900 underline">Ganti PIN Pengurus</button>
-          </div>
         </div>
         <div class="grid grid-cols-2 gap-2.5">
           <button onclick="openAddModal('income')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs md:text-sm py-2.5 px-4 rounded-lg transition shadow-sm">
@@ -285,22 +281,6 @@
           <button type="submit" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition">Simpan</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- MODAL: GANTI PIN -->
-  <div id="changePinModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-xs w-full p-5 shadow-xl space-y-3 fade-in">
-      <h3 class="font-bold text-sm text-slate-900 text-center" id="changePinTitle">Ganti PIN</h3>
-      <input type="hidden" id="changePinTarget" value="admin">
-      <div>
-        <label class="block text-xs text-slate-600 mb-1">PIN Baru (minimal 4 angka)</label>
-        <input type="password" id="inputNewPin" maxlength="8" inputmode="numeric" class="w-full text-center text-xl font-bold py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:bg-white focus:border-slate-400">
-      </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button onclick="closeChangePinModal()" class="w-full bg-slate-100 hover:bg-slate-200 py-2 rounded-lg text-xs font-medium text-slate-700 transition">Batal</button>
-        <button onclick="submitChangePin()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-medium transition">Simpan</button>
-      </div>
     </div>
   </div>
 
@@ -602,38 +582,6 @@
         if (data.success) loadData();
         else alert(data.message || 'Gagal menghapus.');
       } catch (err) { alert('Gagal menghapus.'); }
-    }
-
-    // ============================================================
-    // CHANGE PIN
-    // ============================================================
-    function openChangePinModal(target) {
-      document.getElementById('changePinTarget').value = target;
-      document.getElementById('changePinTitle').textContent = target === 'member' ? 'Ganti PIN Anggota' : 'Ganti PIN Pengurus';
-      document.getElementById('inputNewPin').value = '';
-      document.getElementById('changePinModal').classList.remove('hidden');
-    }
-
-    function closeChangePinModal() { document.getElementById('changePinModal').classList.add('hidden'); }
-
-    async function submitChangePin() {
-      const newPin = document.getElementById('inputNewPin').value;
-      const target = document.getElementById('changePinTarget').value;
-      if (!newPin || newPin.length < 4) return alert('PIN baru minimal 4 angka.');
-
-      try {
-        const res = await fetch('/api/auth/change-pin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-admin-pin': userPin },
-          body: JSON.stringify({ newPin, target })
-        });
-        const data = await res.json();
-        if (data.success) {
-          if (target === 'admin') { userPin = newPin; sessionStorage.setItem('kas_pin', newPin); }
-          closeChangePinModal();
-          alert(data.message);
-        } else { alert(data.message || 'Gagal.'); }
-      } catch (err) { alert('Terjadi kesalahan.'); }
     }
   </script>
 </body>

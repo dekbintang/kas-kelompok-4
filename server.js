@@ -168,29 +168,9 @@ app.post('/api/auth/verify-pin', async (req, res) => {
   return res.status(401).json({ success: false, message: 'PIN Pengurus salah.' });
 });
 
-// Change PIN (Admin or Member)
-app.post('/api/auth/change-pin', requireAdmin, async (req, res) => {
-  const { newPin, target } = req.body;
-  if (!newPin || String(newPin).length < 4) {
-    return res.status(400).json({ success: false, message: 'PIN baru minimal 4 digit.' });
-  }
-
-  const pinTarget = target === 'member' ? 'member' : 'admin';
-
-  if (supabase) {
-    await sbSetSetting(pinTarget === 'member' ? 'member_pin' : 'admin_pin', String(newPin));
-  } else {
-    const db = readFileData();
-    db.settings = db.settings || {};
-    if (pinTarget === 'member') {
-      db.settings.memberPin = String(newPin);
-    } else {
-      db.settings.adminPin = String(newPin);
-    }
-    writeFileData(db);
-  }
-
-  res.json({ success: true, message: `PIN ${pinTarget === 'member' ? 'Anggota' : 'Pengurus'} berhasil diperbarui.` });
+// Change PIN: Hanya bisa diubah langsung dari database (Supabase / kas.json)
+app.post('/api/auth/change-pin', (req, res) => {
+  return res.status(403).json({ success: false, message: 'PIN hanya dapat diubah langsung melalui database.' });
 });
 
 // GET Summary
