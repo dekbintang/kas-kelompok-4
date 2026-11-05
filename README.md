@@ -1,6 +1,6 @@
 # Sistem Informasi Buku Kas Kelompok 4
 
-Sistem pencatatan dan transparansi keuangan kas berbasis web dengan integrasi penempatan dana pada Lembaga Perkreditan Desa (LPD). Aplikasi dirancang dengan antarmuka yang bersih, formal, dan responsif untuk memudahkan pemantauan keuangan secara real-time.
+Sistem pencatatan dan transparansi keuangan kas berbasis web untuk mencatat dan memantau dana kas Kelompok 4 yang disimpan di Lembaga Perkreditan Desa (LPD). Aplikasi dirancang dengan antarmuka yang bersih, formal, dan responsif untuk memudahkan pemantauan keuangan secara real-time.
 
 ---
 
