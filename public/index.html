@@ -94,34 +94,33 @@
           </div>
         </div>
         <div class="flex items-center gap-2 no-print">
-          <!-- Tombol Admin (hanya muncul saat role admin) -->
-          <div id="adminActions" class="hidden flex items-center gap-2">
-            <button onclick="openAddModal('income')" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-medium px-3 py-1.5 rounded-lg transition">
-              + Pemasukan
-            </button>
-            <button onclick="openAddModal('expense')" class="text-xs bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-3 py-1.5 rounded-lg transition">
-              - Pengeluaran
-            </button>
-          </div>
-          <button onclick="handleLogout()" class="text-xs text-slate-500 hover:text-slate-800 border border-slate-200 px-2.5 py-1.5 rounded-lg transition">
+          <button onclick="handleLogout()" class="text-xs text-slate-500 hover:text-slate-800 border border-slate-200 px-3 py-1.5 rounded-lg transition">
             Keluar
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Admin Banner -->
-    <div id="adminBanner" class="hidden bg-slate-800 text-slate-300 text-xs px-4 py-1.5 no-print">
-      <div class="max-w-5xl mx-auto flex items-center justify-between">
-        <span class="font-medium text-white">Mode Pengurus</span>
-        <div class="flex gap-3">
-          <button onclick="openChangePinModal('member')" class="underline hover:text-white">PIN Anggota</button>
-          <button onclick="openChangePinModal('admin')" class="underline hover:text-white">PIN Pengurus</button>
+    <main class="max-w-5xl mx-auto px-4 py-5 space-y-4 fade-in">
+
+      <!-- Panel Aksi Pengurus (Hanya Muncul Saat Login Sebagai Pengurus) -->
+      <div id="adminControls" class="hidden bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 no-print">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Menu Pengurus</span>
+          <div class="flex items-center gap-3 text-xs">
+            <button onclick="openChangePinModal('member')" class="text-slate-500 hover:text-slate-900 underline">Ganti PIN Anggota</button>
+            <button onclick="openChangePinModal('admin')" class="text-slate-500 hover:text-slate-900 underline">Ganti PIN Pengurus</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="openAddModal('income')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs md:text-sm py-2.5 px-4 rounded-lg transition shadow-sm">
+            + Catat Pemasukan
+          </button>
+          <button onclick="openAddModal('expense')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-semibold text-xs md:text-sm py-2.5 px-4 rounded-lg transition">
+            - Catat Pengeluaran
+          </button>
         </div>
       </div>
-    </div>
-
-    <main class="max-w-5xl mx-auto px-4 py-5 space-y-4 fade-in">
 
       <!-- Ringkasan Keuangan -->
       <div class="grid grid-cols-3 gap-3">
@@ -397,8 +396,7 @@
 
       const isAdmin = userRole === 'admin';
       document.getElementById('headerRole').textContent = isAdmin ? 'Pengurus' : 'Anggota';
-      document.getElementById('adminActions').classList.toggle('hidden', !isAdmin);
-      document.getElementById('adminBanner').classList.toggle('hidden', !isAdmin);
+      document.getElementById('adminControls').classList.toggle('hidden', !isAdmin);
 
       loadData();
     }
