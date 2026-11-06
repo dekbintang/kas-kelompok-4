@@ -1,105 +1,129 @@
-# Sistem Informasi Buku Kas Kelompok 4
+<div align="center">
 
-Sistem pencatatan dan transparansi keuangan kas berbasis web untuk mencatat dan memantau dana kas Kelompok 4 yang disimpan di Lembaga Perkreditan Desa (LPD). Aplikasi dirancang dengan antarmuka yang bersih, formal, dan responsif untuk memudahkan pemantauan keuangan secara real-time.
+# 💰 KasFlow LPD
+### *Financial Transparency & Cash Ledger System for Village Credit Institutions (LPD)*
+
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+<p align="center">
+  Sistem pencatatan dan transparansi keuangan kas berbasis web untuk mencatat dan memantau dana kas kelompok yang ditempatkan di Lembaga Perkreditan Desa (LPD). Dirancang dengan arsitektur multi-storage (Supabase Cloud PostgreSQL + Local Fallback) serta kontainerisasi Docker.
+</p>
+
+</div>
 
 ---
 
-## Fitur Utama
+## 🌟 Fitur Utama
 
-- **Otentikasi Berbasis Peran (Role-Based Access):**
-  - Akses Anggota: Tampilan transparansi kas real-time (*read-only*).
-  - Akses Pengurus: Pencatatan mutasi kas (pemasukan dan pengeluaran), pengeditan, serta penghapusan data transaksi.
-- **Transparansi Kas Real-Time:**
-  - Tampilan ringkasan saldo akhir kas di LPD.
-  - Akumulasi total pemasukan dan pengeluaran kas.
+- 🔐 **Otentikasi Berbasis Peran (Role-Based Access):**
+  - **Akses Anggota:** Tampilan transparansi kas real-time (*read-only*) tanpa hambatan.
+  - **Akses Pengurus:** Panel otorisasi untuk pencatatan mutasi kas (pemasukan & pengeluaran), edit, serta hapus transaksi.
+- 📊 **Transparansi Kas Real-Time:**
+  - Tampilan ringkasan saldo akhir kas di rekening LPD.
+  - Akumulasi total pemasukan dan pengeluaran kas otomatis.
   - Pemisahan tabel pencatatan mutasi pemasukan dan pengeluaran secara mandiri.
-- **Pencarian & Penyaringan Data:**
-  - Filter transaksi berdasarkan tanggal tertentu.
+- 🔎 **Pencarian & Penyaringan Data:**
+  - Filter transaksi berdasarkan rentang tanggal.
   - Filter transaksi berdasarkan kategori spesifik.
-- **Manajemen Mutasi Terstruktur:**
-  - Kategori Pemasukan: Iuran Anggota, Punia / Sumbangan, Denda, Pemasukan Lainnya.
-  - Kategori Pengeluaran: Upakara & Sosial, Operasional, Dana Duka, Pengeluaran Lainnya.
-- **Ekspor & Cetak Laporan:**
-  - Format cetak ramah printer (*print-optimized*) untuk kebutuhan arsip dan pelaporan fisik.
-- **Dukungan Multi-Penyimpanan Data:**
-  - Cloud Database: Terintegrasi dengan Supabase (PostgreSQL) untuk persistensi data online.
-  - Local Storage: Mendukung penyimpanan berbasis file JSON untuk lingkungan pengembangan.
+- 🏷️ **Manajemen Kategori Finansial:**
+  - **Kategori Pemasukan:** Iuran Anggota, Punia / Sumbangan, Denda, Pemasukan Lainnya.
+  - **Kategori Pengeluaran:** Upakara & Sosial, Operasional, Dana Duka, Pengeluaran Lainnya.
+- 🖨️ **Ekspor & Cetak Laporan:** Format cetak ramah printer (*print-optimized*) untuk kebutuhan arsip fisik dan rapat pertanggungjawaban.
+- ☁️ **Dukungan Multi-Penyimpanan Data:**
+  - **Cloud Database:** Terintegrasi dengan **Supabase (PostgreSQL)** untuk persistensi data online real-time.
+  - **Local Storage Fallback:** Mendukung penyimpanan berbasis file JSON untuk *offline development*.
 
 ---
 
-## Teknologi yang Digunakan
+## 🛠️ Tech Stack & Arsitektur
 
-- **Backend:** Node.js, Express.js
-- **Database:** Supabase (PostgreSQL) / File Storage Lokal
-- **Frontend:** HTML5, Vanilla JavaScript, Tailwind CSS
-- **Deployment Platform:** Vercel / Render / Docker Container
+* **Runtime & Framework:** Node.js, Express.js
+* **Database & BaaS:** [Supabase](https://supabase.com/) (PostgreSQL)
+* **Frontend:** HTML5, Vanilla JavaScript modern, Tailwind CSS
+* **Containerization:** Docker & Docker Compose compatible
+* **Deployment:** Vercel Serverless / Cloud Hosting
 
 ---
 
-## Struktur Direktori
+## 📂 Struktur Repositori
 
 ```
 ├── data/
-│   └── kas.json             # Penyimpanan lokal cadangan
+│   └── kas.json             # Penyimpanan lokal cadangan (fallback)
 ├── public/
-│   └── index.html           # Antarmuka web utama
+│   └── index.html           # Antarmuka web utama responsif
 ├── .dockerignore            # Aturan pengabaian file Docker
-├── .env.example             # Template konfigurasi environment variable
-├── .gitignore               # Aturan pengabaian file Git
+├── .env.example             # Template variabel environment
+├── .gitignore               # Aturan pengabaian Git
 ├── Dockerfile               # Konfigurasi container Docker
 ├── package.json             # Manifes dependensi Node.js
-├── server.js                # Server backend Express & REST API
-├── supabase-schema.sql      # Skema database PostgreSQL untuk Supabase
+├── server.js                # Server backend Express & API routing
+├── supabase-schema.sql      # Skema DDL tabel PostgreSQL Supabase
 └── vercel.json              # Konfigurasi deployment Vercel
 ```
 
 ---
 
-## Menjalankan di Lingkungan Lokal
+## ⚡ Panduan Instalasi Lokal
 
-### 1. Prasyarat
-- Node.js versi 18 atau yang lebih baru.
-- npm (Node Package Manager).
+### Prasyarat
+* Node.js >= 18.x
+* NPM
 
-### 2. Instalasi Dependensi
-Jalankan perintah berikut pada terminal:
+### Langkah-Langkah
+
+1. **Clone Repositori:**
+   ```bash
+   git clone https://github.com/dekbintang/kas-kelompok-4.git
+   cd kas-kelompok-4
+   ```
+
+2. **Instal Dependensi:**
+   ```bash
+   npm install
+   ```
+
+3. **Konfigurasi Environment:**
+   Salin berkas konfigurasi environment:
+   ```bash
+   cp .env.example .env
+   ```
+   Isi variabel koneksi Supabase Anda:
+   ```env
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_KEY=your-anon-or-service-role-key
+   PORT=3000
+   ```
+   *(Opsional: Jika tidak mengisi Supabase credentials, sistem akan otomatis beralih menggunakan local JSON storage di `data/kas.json`)*.
+
+4. **Jalankan Aplikasi:**
+   ```bash
+   npm run dev
+   ```
+   Buka peramban web pada: `http://localhost:3000`
+
+### Menjalankan dengan Docker
 ```bash
-npm install
+docker build -t kasflow-lpd .
+docker run -p 3000:3000 --env-file .env kasflow-lpd
 ```
-
-### 3. Konfigurasi Lingkungan
-Salin file `.env.example` menjadi `.env` dan lengkapi variabel yang dibutuhkan jika menggunakan database cloud:
-```bash
-cp .env.example .env
-```
-
-### 4. Menjalankan Aplikasi
-```bash
-npm start
-```
-Aplikasi akan aktif dan dapat diakses melalui browser pada port lokal yang ditentukan (default: port 3000).
 
 ---
 
-## Panduan Deployment
+## 👨‍💻 Pengembang
 
-### Deployment ke Vercel
-1. Hubungkan repositori Git ke proyek baru di dashboard penyedia hosting.
-2. Daftarkan Environment Variables berikut pada pengaturan proyek:
-   - `SUPABASE_URL`: URL endpoint proyek database.
-   - `SUPABASE_KEY`: Kunci API proyek database.
-   - `STORAGE_MODE`: Diisi dengan nilai `supabase`.
-3. Jalankan proses deployment.
-
-### Deployment Menggunakan Docker
-```bash
-docker build -t kas-kelompok4 .
-docker run -p 3000:3000 kas-kelompok4
-```
+**I Kadek Bintang Adi Bimantara & Tim Kelompok 4**  
+*Program Studi Teknologi Informasi — Universitas Udayana*  
+* [GitHub Profile](https://github.com/dekbintang)
+* [Instagram](https://instagram.com/ikadek_bintang)
 
 ---
 
-## Keamanan Data
-- Kredensial dan kunci autentikasi tidak disimpan di dalam repositori publik.
-- Pengaturan hak akses dan PIN dikelola secara terpusat melalui database.
-- Seluruh komunikasi data pada lingkungan produksi menggunakan protokol aman HTTPS.
+## 📄 Lisensi
+Proyek ini dilisensikan di bawah [Lisensi MIT](LICENSE).
